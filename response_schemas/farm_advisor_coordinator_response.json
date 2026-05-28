@@ -1,0 +1,8 @@
+{
+  "agent_name": "Farm Advisor Coordinator",
+  "agent_id": "69ec55d4a57e78ed3c81ed7c",
+  "description": "Receives farmer profile, orchestrates all sub-agents, aggregates outputs into unified dashboard",
+  "agent_type": "voice",
+  "accessor": "websocket",
+  "auto_generated": true
+}
