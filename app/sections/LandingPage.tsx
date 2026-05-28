@@ -1,609 +1,609 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  FiArrowRight, 
-  FiCpu, 
-  FiAlertTriangle, 
-  FiTrendingUp, 
-  FiDatabase, 
-  FiShield, 
-  FiPhoneCall, 
-  FiZap, 
-  FiLayers, 
-  FiCheck, 
-  FiCompass, 
-  FiActivity, 
-  FiUsers, 
-  FiTrendingDown,
-  FiFileText
-} from 'react-icons/fi'
+import {
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  AudioLines,
+  BarChart3,
+  BrainCircuit,
+  CalendarClock,
+  Check,
+  ChevronRight,
+  CloudSun,
+  Database,
+  Fingerprint,
+  Gauge,
+  Landmark,
+  Layers3,
+  LineChart,
+  LockKeyhole,
+  MapPinned,
+  Network,
+  Radar,
+  ReceiptText,
+  ShieldCheck,
+  Sparkles,
+  Sprout,
+  TrendingUp,
+  WalletCards,
+  type LucideIcon,
+} from 'lucide-react'
 
 interface LandingPageProps {
   onGetStarted: () => void
   onLoginClick: () => void
 }
 
-export default function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
-  const [activeFeatureTab, setActiveFeatureTab] = useState<'advisory' | 'finance' | 'voice' | 'risk'>('advisory')
+type FeatureTab = 'advisory' | 'finance' | 'voice' | 'risk'
+type IconListItem = [string, string, LucideIcon]
 
+const problemSignals = [
+  {
+    icon: AlertTriangle,
+    label: 'Spray timing risk',
+    title: 'One wrong protection window can define the season.',
+    copy: 'Farmers decide under humidity shifts, pest pressure, rainfall windows, and thin input budgets. Guessing too early wastes money. Waiting too long can collapse yield.',
+  },
+  {
+    icon: WalletCards,
+    label: 'Household finance pressure',
+    title: 'Agronomy and credit decisions are still disconnected.',
+    copy: 'Loan rates, insurance eligibility, scheme benefits, and input purchases shape every farm action, yet most tools treat them as separate problems.',
+  },
+  {
+    icon: Layers3,
+    label: 'Fragmented intelligence',
+    title: 'Weather apps, market lists, and subsidy portals do not plan together.',
+    copy: 'Farmers are forced to reconcile scattered signals manually when what they need is a single operational decision surface.',
+  },
+]
+
+const solutionModules = [
+  'AI advisory engine',
+  'Weather intelligence',
+  'Pest and disease risk',
+  'Financial planning',
+  'Scheme discovery',
+  'Insurance readiness',
+  'Market timing',
+  'Voice summaries',
+]
+
+const workflow = [
+  ['01', 'Create account', 'Secure farmer identity with cookie-based auth and user-scoped data.'],
+  ['02', 'Complete profile', 'Capture crop stage, soil, irrigation, budget, finance, and language context.'],
+  ['03', 'Generate advisory', 'OpenRouter reasoning returns a structured multi-module decision packet.'],
+  ['04', 'Operate dashboard', 'Review actions, listen by voice, track history, and plan the next week.'],
+]
+
+const featureGrid: IconListItem[] = [
+  ['AI Advisory Engine', 'Structured crop decisions with weather, pest, budget, and stage context.', BrainCircuit],
+  ['Pest Intelligence', 'Risk windows, symptoms, treatment timing, and protection priorities.', Radar],
+  ['Weather Forecasting', 'Rainfall and humidity signals converted into action timing.', CloudSun],
+  ['Financial Planning', 'Input costs, loan alternatives, subsidy value, and profit visibility.', WalletCards],
+  ['Scheme Discovery', 'Eligible programs, required documents, deadlines, and next steps.', Landmark],
+  ['Risk Analysis', 'Seasonal, pest, finance, and digital fraud risks in one view.', ShieldCheck],
+  ['Income Projection', 'Harvest, waste value, and scheme benefits combined into a forecast.', TrendingUp],
+  ['Crop Guidance', 'Crop strategy, soil fit, seed direction, and stage-specific actions.', Sprout],
+  ['Farmer Analytics', 'History-aware profile and advisory records scoped to each user.', BarChart3],
+  ['Smart Recommendations', 'Clear next actions designed for weekly operational decisions.', Sparkles],
+]
+
+const techStack: IconListItem[] = [
+  ['OpenRouter', 'LLM reasoning layer producing JSON advisory packets under a strict schema contract.', BrainCircuit],
+  ['Open-source AI models', 'Flexible model routing for crop, finance, risk, and policy synthesis.', Network],
+  ['MongoDB Atlas', 'Persistent farmer profiles and advisory history with authenticated ownership.', Database],
+  ['Next.js architecture', 'Unified application routes, server-only secrets, and app-router UI workflows.', Layers3],
+  ['Structured defaults', 'Deterministic schema merging keeps dashboards stable when model output varies.', Fingerprint],
+  ['Scalable extensions', 'RAG, scheduler, and upload proxies prepare the platform for proactive intelligence.', CalendarClock],
+]
+
+const tabContent: Record<FeatureTab, { title: string; copy: string; bullets: string[]; panel: React.ReactNode }> = {
+  advisory: {
+    title: 'A decision packet, not a chatbot answer.',
+    copy: 'AGROGUIA.AI converts farmer context into structured modules that the dashboard can render, store, replay, and compare across seasons.',
+    bullets: ['JSON advisory contract', 'Weather and pest action windows', 'Crop stage and budget alignment'],
+    panel: (
+      <div className="space-y-3 rounded-lg border border-white/10 bg-black/35 p-4 font-mono text-[11px] text-slate-300">
+        <div className="text-emerald-300">pest_advisory {'{'}</div>
+        <div className="pl-4 text-slate-400">primary_disease: "Yellow Mosaic Virus"</div>
+        <div className="pl-4 text-slate-400">action_window_hours: 48</div>
+        <div className="pl-4 text-slate-400">immediate_action: "Spray Mancozeb 600g/acre"</div>
+        <div className="pl-4 text-amber-200">risk_level: "High"</div>
+        <div className="text-emerald-300">{'}'}</div>
+      </div>
+    ),
+  },
+  finance: {
+    title: 'Farm operations tied to household economics.',
+    copy: 'The platform connects input planning, lender comparisons, scheme discovery, insurance readiness, and income projection inside the same advisory flow.',
+    bullets: ['KCC versus high-rate lender comparison', 'Scheme benefit discovery', 'Waste and harvest income projection'],
+    panel: (
+      <div className="space-y-3 rounded-lg border border-white/10 bg-black/35 p-4 text-sm">
+        <div className="flex items-center justify-between rounded-md border border-red-400/20 bg-red-950/20 p-3">
+          <span className="text-slate-300">Local NBFC</span>
+          <span className="font-semibold text-red-200">18% rate</span>
+        </div>
+        <div className="flex items-center justify-between rounded-md border border-emerald-400/20 bg-emerald-950/20 p-3">
+          <span className="text-slate-300">SBI KCC</span>
+          <span className="font-semibold text-emerald-200">4% subsidized</span>
+        </div>
+        <div className="rounded-md border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-400">Projected annual value: harvest + schemes + waste resale</div>
+      </div>
+    ),
+  },
+  voice: {
+    title: 'Designed for field conditions and shared devices.',
+    copy: 'Voice summaries make high-value advisories usable when typing is slow, literacy varies, or decisions happen away from a desk.',
+    bullets: ['Speech synthesis for modules', 'Regional language support', 'Live voice interaction surface'],
+    panel: (
+      <div className="rounded-lg border border-white/10 bg-black/35 p-5">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-300/10 text-emerald-200">
+          <AudioLines className="h-7 w-7" />
+        </div>
+        <div className="mt-5 space-y-2 text-center">
+          <div className="text-sm font-semibold text-white">Voice advisory ready</div>
+          <div className="text-xs leading-relaxed text-slate-400">"Spray before rainfall. Keep photos ready for insurance claim filing."</div>
+        </div>
+      </div>
+    ),
+  },
+  risk: {
+    title: 'Risk intelligence includes the digital world too.',
+    copy: 'The advisory layer flags unsafe loan patterns, missing documents, suspicious subsidy messages, and preventable mistakes that leak income.',
+    bullets: ['Fraud awareness simulations', 'Insurance document readiness', 'Deadline and action alerts'],
+    panel: (
+      <div className="space-y-3 rounded-lg border border-white/10 bg-black/35 p-4 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-slate-200">PM-KISAN OTP request</span>
+          <Badge className="border border-red-400/20 bg-red-500/10 text-red-200 hover:bg-red-500/10">Threat</Badge>
+        </div>
+        <p className="rounded-md border border-red-400/15 bg-red-950/20 p-3 leading-relaxed text-slate-400">Government services do not ask farmers to share OTPs over calls or messages.</p>
+      </div>
+    ),
+  },
+}
+
+function IntelligenceConsole() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans overflow-x-hidden">
-      {/* Background Decorative Neural Grid Effect */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-40" />
-
-      {/* Glow Orbs */}
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none animate-pulse duration-[8000ms]" />
-      <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] rounded-full bg-teal-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
-
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-50 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-            AG
-          </div>
-          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-            AGROGUIA.AI
-          </span>
-          <Badge variant="outline" className="hidden sm:inline-flex border-emerald-500/30 text-emerald-400 bg-emerald-950/30 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
-            v1.0 Live
-          </Badge>
+    <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-lg border border-white/10 bg-slate-950/90 shadow-2xl shadow-black/40">
+      <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-3">
+        <div className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
         </div>
-        
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={onLoginClick} 
-            className="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors"
-          >
-            Sign In
-          </button>
-          <Button 
-            onClick={onGetStarted}
-            className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition-all duration-300"
-          >
-            Launch Console
-          </Button>
+        <div className="hidden rounded-md border border-white/10 bg-black/30 px-3 py-1 font-mono text-[11px] text-slate-500 sm:block">
+          agroguia.ai/intelligence-console
         </div>
-      </header>
+        <div className="h-2 w-16 rounded-full bg-white/10" />
+      </div>
 
-      {/* Section 1: Hero Section */}
-      <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-950/20 text-emerald-400 text-xs font-semibold mb-6">
-          <FiZap className="w-3.5 h-3.5" />
-          <span>Intelligent Agriculture Decision Engine</span>
-        </div>
-
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.1] mb-6">
-          The Operating System for{' '}
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent bg-[size:200%]">
-            Intelligent Farming
-          </span>
-        </h1>
-
-        <p className="text-lg md:text-xl text-slate-400 max-w-3xl leading-relaxed mb-10">
-          Empowering small and mid-sized farms to eliminate uncertainty. AGROGUIA.AI unifies agronomic recommendations, localized risk forecasting, and financial planning into one cohesive intelligence layer.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 z-10">
-          <Button 
-            size="lg"
-            onClick={onGetStarted}
-            className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-8 h-12 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] transition-all"
-          >
-            Generate AI Farm Dashboard <FiArrowRight className="ml-2 w-4 h-4" />
-          </Button>
-          <Button 
-            size="lg"
-            variant="outline"
-            onClick={onGetStarted}
-            className="border-slate-800 bg-slate-900/50 hover:bg-slate-900 text-slate-300 hover:text-white px-8 h-12"
-          >
-            Quick Sandbox
-          </Button>
-        </div>
-
-        {/* Dashboard Preview Element */}
-        <div className="w-full max-w-5xl rounded-xl border border-slate-800/80 bg-slate-900/30 backdrop-blur-sm p-4 md:p-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-          
-          {/* Mock Browser Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-900 mb-4 md:mb-6">
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-slate-855" style={{ backgroundColor: '#ef4444' }} />
-              <span className="w-3 h-3 rounded-full bg-slate-855" style={{ backgroundColor: '#eab308' }} />
-              <span className="w-3 h-3 rounded-full bg-slate-855" style={{ backgroundColor: '#22c55e' }} />
+      <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="border-b border-white/10 p-4 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase text-emerald-200/70">Farm decision packet</p>
+              <h3 className="mt-2 text-xl font-semibold text-white">Soybean, flowering stage</h3>
             </div>
-            <div className="text-xs text-slate-500 font-mono bg-slate-950 px-4 py-1 rounded-md border border-slate-900">
-              console.agroguia.ai/dashboard
-            </div>
-            <div className="w-12 h-2 bg-slate-800 rounded" />
+            <Badge className="border border-emerald-300/20 bg-emerald-300/10 text-emerald-100 hover:bg-emerald-300/10">Schema validated</Badge>
           </div>
 
-          {/* Interactive Mock Dashboard */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
-            <div className="lg:col-span-2 space-y-6">
-              {/* Financial Dashboard */}
-              <div className="p-4 rounded-lg bg-slate-950 border border-slate-900">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs uppercase font-mono tracking-wider text-slate-400">Financial Forecast (Soybean)</span>
-                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-[10px] bg-emerald-950/20">Optimized</Badge>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-[10px] text-slate-500">Expected Yield Value</p>
-                    <p className="text-base md:text-xl font-bold text-white">Rs. 48,000</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-slate-500">Optimized Cost Plan</p>
-                    <p className="text-base md:text-xl font-bold text-teal-400">Rs. 12,000</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-slate-500">Net Estimated Profit</p>
-                    <p className="text-base md:text-xl font-bold text-emerald-400">Rs. 40,000</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Modules Tabs Previews */}
-              <div className="space-y-3">
-                <div className="flex border-b border-slate-900 text-xs">
-                  {['Weather Alerts', 'Pest Risk Control', 'Financial Planning'].map((tab, idx) => (
-                    <button 
-                      key={tab} 
-                      className={`pb-2 px-3 border-b-2 font-medium transition-all ${idx === 0 ? 'border-emerald-500 text-emerald-400 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="p-4 rounded-lg bg-slate-950 border border-slate-900 space-y-3">
-                  <div className="flex items-center gap-3 border-l-2 border-emerald-500 pl-3">
-                    <div>
-                      <h4 className="text-xs font-semibold text-white">Weather Pre-empt Spray Window</h4>
-                      <p className="text-[11px] text-slate-400">18mm precipitation predicted on Day 47. Schedule foliar spray 24h prior.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 border-l-2 border-red-500 pl-3">
-                    <div>
-                      <h4 className="text-xs font-semibold text-white">Fungal Alert: Yellow Mosaic Virus Risk</h4>
-                      <p className="text-[11px] text-slate-400">Humidity thresholds hit 84%. Active recommendation: Spray Mancozeb (600g/acre).</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sidebar Onboarding Summary */}
-            <div className="p-4 rounded-lg bg-slate-950 border border-slate-900 space-y-4 flex flex-col justify-between">
-              <div className="space-y-4">
-                <h3 className="text-xs uppercase font-mono tracking-wider text-slate-400">Farmer Context Matrix</h3>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between border-b border-slate-900 pb-1">
-                    <span className="text-slate-500">Location</span>
-                    <span className="text-slate-300">Bijapur, Karnataka</span>
-                  </div>
-                  <div className="flex justify-between border-b border-slate-900 pb-1">
-                    <span className="text-slate-500">Crop Focus</span>
-                    <span className="text-slate-300">Soybean (Flowering)</span>
-                  </div>
-                  <div className="flex justify-between border-b border-slate-900 pb-1">
-                    <span className="text-slate-500">Soil Condition</span>
-                    <span className="text-slate-300">Black Cotton Soil</span>
-                  </div>
-                  <div className="flex justify-between border-b border-slate-900 pb-1">
-                    <span className="text-slate-500">Risk Profile</span>
-                    <span className="text-slate-300 text-yellow-500 font-semibold">Medium</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3 bg-emerald-950/20 border border-emerald-900/30 rounded-md">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <FiPhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-xs font-semibold text-emerald-300">Voice Synthesis Active</span>
-                </div>
-                <p className="text-[10px] text-slate-400 leading-normal">
-                  "Spray Mancozeb at 6 AM tomorrow to mitigate fungal risk prior to rain."
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 2: The Problem */}
-      <section className="px-6 py-20 border-t border-slate-900 bg-slate-950/50 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold mb-3">The Problem</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Farming under the stress of high uncertainty
-            </h3>
-            <p className="text-slate-400 leading-relaxed">
-              Every week, farmers make complex, high-risk calls. Without localized, contextual intelligence, they operate in the dark, leading to expensive mistakes and missed opportunities.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid gap-3 sm:grid-cols-3">
             {[
-              {
-                icon: <FiAlertTriangle className="w-6 h-6 text-red-500" />,
-                title: "Agronomic Guesswork",
-                desc: "Applying sprays too early wastes costly inputs. Applying too late allows pest disease to wipe out seasonal yield entirely."
-              },
-              {
-                icon: <FiTrendingDown className="w-6 h-6 text-orange-500" />,
-                title: "Financial Leakage",
-                desc: "Lack of comparative awareness causes farmers to secure predatory credit rates from local lenders instead of low-interest schemes."
-              },
-              {
-                icon: <FiCompass className="w-6 h-6 text-yellow-500" />,
-                title: "Subsidies Unclaimed",
-                desc: "Complex guidelines and missed deadlines block eligible families from receiving vital government support funds annually."
-              },
-              {
-                icon: <FiLayers className="w-6 h-6 text-slate-500" />,
-                title: "Fragmented Platforms",
-                desc: "Farming apps force users to cross-reference multiple disjointed sources for weather, markets, and scheme registration rules."
-              }
-            ].map((prob, i) => (
-              <Card key={i} className="bg-slate-900/40 border-slate-800 hover:border-slate-700 transition-colors">
-                <CardContent className="p-6 space-y-4">
-                  <div className="p-2 w-fit rounded-lg bg-slate-950 border border-slate-800">
-                    {prob.icon}
-                  </div>
-                  <h4 className="text-base font-bold text-white">{prob.title}</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">{prob.desc}</p>
-                </CardContent>
-              </Card>
+              ['Net estimate', 'Rs. 40,000', 'after input costs'],
+              ['Rain window', '18mm', 'forecast in 48h'],
+              ['Action risk', 'High', 'fungal pressure'],
+            ].map(([label, value, detail]) => (
+              <div key={label} className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+                <p className="text-[11px] uppercase text-slate-500">{label}</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+                <p className="mt-1 text-xs text-slate-500">{detail}</p>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Section 3: The Solution */}
-      <section className="px-6 py-20 border-t border-slate-900">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold mb-3">The Solution</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              A Unified Intelligent Layer for Agronomy and Finance
-            </h3>
-            <p className="text-slate-400 leading-relaxed mb-6">
-              AGROGUIA.AI acts as a cohesive farm co-pilot. Instead of generic suggestions, our system parses your unique soil type, irrigation structure, crop maturity timeline, and financial buffers to formulate a structured operational blueprint.
-            </p>
-            
-            <div className="space-y-4">
+          <div className="mt-5 rounded-lg border border-white/10 bg-black/25 p-4">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-white">Protection action timeline</p>
+                <p className="text-xs text-slate-500">Converted from crop stage, humidity, rainfall, and disease risk.</p>
+              </div>
+              <Activity className="h-5 w-5 text-emerald-200" />
+            </div>
+            <div className="space-y-3">
               {[
-                { title: "Context-Aware Decisions", text: "Evaluating crop stage and localized constraints dynamically." },
-                { title: "Integrated Agronomy & Finance", text: "Aligning chemicals and schedules with your input budget limits." },
-                { title: "Longitudinal Memory", text: "Saving every generated plan to build an audit trail of farm outcomes." }
-              ].map((item, idx) => (
-                <div key={idx} className="flex gap-3">
-                  <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                    <FiCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">{item.title}</h4>
-                    <p className="text-xs text-slate-400 mt-0.5">{item.text}</p>
-                  </div>
+                ['Today', 'Check leaf symptoms and soil moisture', 'Monitor'],
+                ['Tomorrow 6 AM', 'Spray Mancozeb 600g per acre before rain', 'Critical'],
+                ['48 hours', 'Avoid irrigation and photograph affected area', 'Insurance'],
+              ].map(([time, action, level]) => (
+                <div key={time} className="grid grid-cols-[88px_1fr_auto] items-center gap-3 rounded-md border border-white/5 bg-white/[0.025] px-3 py-2 text-xs">
+                  <span className="font-mono text-slate-500">{time}</span>
+                  <span className="text-slate-300">{action}</span>
+                  <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase text-emerald-100">{level}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 sm:p-6">
+          <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase text-slate-500">Context matrix</p>
+                <p className="mt-1 text-sm font-medium text-white">Raju Patil, Bijapur</p>
+              </div>
+              <MapPinned className="h-5 w-5 text-teal-200" />
+            </div>
+            <div className="space-y-2 text-xs">
+              {[
+                ['Land', '4 acres'],
+                ['Soil', 'Black cotton'],
+                ['Irrigation', 'Rainfed'],
+                ['Budget', 'Rs. 12,000'],
+                ['Insurance', 'PMFBY active'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-slate-500">{label}</span>
+                  <span className="text-slate-300">{value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="relative p-6 rounded-xl border border-slate-800 bg-slate-900/20 backdrop-blur-md">
-            <h4 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">Advisory Engine Processing Graph</h4>
-            
-            <div className="space-y-4">
-              <div className="p-3 bg-slate-950 border border-slate-900 rounded-lg flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-2"><FiDatabase className="w-4 h-4 text-emerald-400" /> Farmer Context Packet</span>
-                <span className="text-emerald-400 font-mono">100% Parsed</span>
-              </div>
-              
-              <div className="flex justify-center my-2 text-slate-600">
-                <div className="h-6 w-px bg-slate-850" style={{ width: '1px', height: '24px', backgroundColor: '#334155' }} />
-              </div>
-
-              <div className="p-3 bg-slate-950 border border-slate-900 rounded-lg flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-2"><FiCpu className="w-4 h-4 text-teal-400" /> OpenRouter Reasoner Completions</span>
-                <span className="text-teal-400 font-mono">Synthesizing...</span>
-              </div>
-
-              <div className="flex justify-center my-2 text-slate-600">
-                <div className="h-6 w-px bg-slate-850" style={{ width: '1px', height: '24px', backgroundColor: '#334155' }} />
-              </div>
-
-              <div className="p-3 bg-slate-950 border border-slate-900 rounded-lg flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-2"><FiLayers className="w-4 h-4 text-emerald-400" /> Enforcement & Schema Alignment</span>
-                <span className="text-emerald-400 font-mono">Defaults Merged</span>
-              </div>
+          <div className="mt-4 rounded-lg border border-emerald-300/15 bg-emerald-300/[0.055] p-4">
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-100">
+              <BrainCircuit className="h-4 w-4" />
+              AI recommendation
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: How It Works */}
-      <section className="px-6 py-20 border-t border-slate-900 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold mb-3">Process Workflow</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Four steps to intelligent control</h3>
-            <p className="text-slate-400 leading-relaxed">
-              We convert technical setup into operational output in under three minutes.
+            <p className="text-xs leading-relaxed text-slate-300">
+              Prioritize spray before forecast rain, preserve claim evidence, and delay market sale two weeks unless local mandi price crosses MSP.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-            {/* Connection line for desktops */}
-            <div className="hidden lg:block absolute top-[40px] left-[10%] right-[10%] h-px bg-slate-850 pointer-events-none" style={{ backgroundColor: '#1e293b' }} />
-            
-            {[
-              { step: "01", title: "Create Identity", desc: "Set up your secure, private profile with standalone credentials." },
-              { step: "02", title: "Define Profile Matrix", desc: "Input location, current crop, growth stages, soil type, and input budget." },
-              { step: "03", title: "Synthesize Intel", desc: "Our engine hits OpenRouter to structure a contextual crop blueprint." },
-              { step: "04", title: "Execute & Manage", desc: "Interact via dashboard, track historical recommendations, and use voice logs." }
-            ].map((item, i) => (
-              <div key={i} className="relative space-y-4">
-                <div className="w-12 h-12 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-emerald-400 font-mono font-bold text-lg relative z-10">
-                  {item.step}
-                </div>
-                <h4 className="text-lg font-bold text-white">{item.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
         </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      {/* Section 5: Core Features */}
-      <section className="px-6 py-20 border-t border-slate-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold mb-3">Core Modules</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">A complete agricultural intelligence matrix</h3>
-            <p className="text-slate-400 leading-relaxed">
-              AGROGUIA.AI brings critical agricultural facets together, running them through structured rules.
-            </p>
-          </div>
+export default function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
+  const [activeFeatureTab, setActiveFeatureTab] = useState<FeatureTab>('advisory')
+  const activeTab = useMemo(() => tabContent[activeFeatureTab], [activeFeatureTab])
 
-          {/* Interactive Feature selector */}
-          <div className="flex justify-center flex-wrap gap-2 mb-12">
-            {[
-              { id: 'advisory', label: 'AI Advisory Engine' },
-              { id: 'finance', label: 'Financial Arbitrage' },
-              { id: 'voice', label: 'Voice Accessibility' },
-              { id: 'risk', label: 'Fraud & Security' }
-            ].map(tab => (
-              <Button
-                key={tab.id}
-                variant={activeFeatureTab === tab.id ? 'default' : 'outline'}
-                onClick={() => setActiveFeatureTab(tab.id as any)}
-                className={`text-xs ${activeFeatureTab === tab.id ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-600' : 'border-slate-800 bg-slate-900/30 text-slate-400 hover:bg-slate-900 hover:text-white'}`}
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </div>
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-[#07100d] text-slate-100 selection:bg-emerald-300 selection:text-slate-950">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#07100d]/85 px-4 py-3 backdrop-blur-xl sm:px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <button onClick={onGetStarted} className="group flex items-center gap-3 text-left" aria-label="Open AGROGUIA.AI authentication">
+            <span className="flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/25 bg-emerald-300/10 text-sm font-bold text-emerald-100 shadow-lg shadow-emerald-950/30">
+              AG
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-white">AGROGUIA.AI</span>
+              <span className="hidden text-[11px] uppercase text-slate-500 sm:block">Farm intelligence layer</span>
+            </span>
+          </button>
 
-          <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/20 backdrop-blur-md">
-            {activeFeatureTab === 'advisory' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Advisory</Badge>
-                  <h3 className="text-2xl font-bold text-white">Hyper-Contextual Crop Blueprinting</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    By parsing active farmer details, growth stage timing, soil constraints, and pesticide parameters, our engine creates specific advisories containing targeted actions instead of generic crop suggestions.
-                  </p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Grounded in specific sowing date calendars</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Immediate pest detection treatment windows</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Fertilizer quantities calibrated by soil capacity</div>
-                  </div>
-                </div>
-                <div className="bg-slate-950 p-4 rounded-lg border border-slate-900 text-xs font-mono space-y-2 max-h-56 overflow-y-auto">
-                  <p className="text-slate-500">// AI advisory blueprint result</p>
-                  <p className="text-emerald-400">"pest_advisory": &#123;</p>
-                  <p className="pl-4 text-slate-350">"primary_disease_name": "Yellow Mosaic Virus",</p>
-                  <p className="pl-4 text-slate-350">"action_window_hours": 48,</p>
-                  <p className="pl-4 text-slate-350">"immediate_action": "Spray Mancozeb 600g/acre",</p>
-                  <p className="pl-4 text-slate-350">"overall_risk": "High"</p>
-                  <p className="text-emerald-400">&#125;</p>
-                </div>
-              </div>
-            )}
+          <nav className="hidden items-center gap-6 text-sm text-slate-400 lg:flex">
+            <a href="#problem" className="transition-colors hover:text-white">Problem</a>
+            <a href="#solution" className="transition-colors hover:text-white">Solution</a>
+            <a href="#features" className="transition-colors hover:text-white">Features</a>
+            <a href="#technology" className="transition-colors hover:text-white">Technology</a>
+            <a href="#vision" className="transition-colors hover:text-white">Vision</a>
+          </nav>
 
-            {activeFeatureTab === 'finance' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Finance</Badge>
-                  <h3 className="text-2xl font-bold text-white">Cost Reduction & Subsidies Discovery</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Access transparent market analytics. AGROGUIA.AI continuously audits eligible government subsidies, monitors crop insurance payout steps, and compares predatory NBFC rates against low-interest options (KCC).
-                  </p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> KCC vs NBFC comparative pricing calculators</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Mandi price variance comparison & transportation cost offsets</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Proactive subsidy deadline tracking alerts</div>
-                  </div>
-                </div>
-                <div className="bg-slate-950 p-4 rounded-lg border border-slate-900 text-xs space-y-3">
-                  <div className="flex justify-between items-center text-slate-500 text-[10px] uppercase">
-                    <span>Lender Comparison Matrix</span>
-                    <span className="text-red-400 font-mono font-semibold">Interest Gap Alert</span>
-                  </div>
-                  <div className="p-3 bg-red-950/10 border border-red-950/30 rounded text-slate-355">
-                    <p className="font-semibold text-white">Local NBFC: 18% Rate</p>
-                    <p className="text-[11px] text-slate-450">Total cost on Rs. 1L: Rs. 1,10,400 over 1yr</p>
-                  </div>
-                  <div className="p-3 bg-emerald-950/10 border border-emerald-900/30 rounded text-slate-355">
-                    <p className="font-semibold text-emerald-400">SBI KCC: 4% Subsidized Rate</p>
-                    <p className="text-[11px] text-slate-400">Total cost on Rs. 1L: Rs. 1,04,000. Saving Rs. 6,400/yr</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeFeatureTab === 'voice' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Voice Accessibility</Badge>
-                  <h3 className="text-2xl font-bold text-white">Voice-First Interaction Blueprint</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Designed for field conditions where writing is impractical. Play text summaries in regional languages instantly or talk directly to the advisor layer using voice stream interfaces.
-                  </p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> TTS readout for individual modules</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Multi-language translations including Hindi, Kannada, Telugu</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Conversational voice streams for immediate query response</div>
-                  </div>
-                </div>
-                <div className="bg-slate-950 p-6 rounded-lg border border-slate-900 flex flex-col items-center justify-center space-y-4 min-h-56">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 animate-pulse">
-                    <FiPhoneCall className="w-5 h-5" />
-                  </div>
-                  <div className="text-center space-y-1">
-                    <p className="text-xs font-semibold text-white">Voice Streaming Active</p>
-                    <p className="text-[11px] text-slate-400">Transcribing query and generating response summary...</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeFeatureTab === 'risk' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Security & Risk</Badge>
-                  <h3 className="text-2xl font-bold text-white">Digital safety and fraud avoidance</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Protecting farmers from rising digital scams. The engine incorporates security checks that flag suspicious messages, OTP requests, and false subsidy application portals.
-                  </p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Digital safety score checks based on device parameters</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Simulation matrices for phishing attempts</div>
-                    <div className="flex items-center gap-2"><FiCheck className="text-emerald-400" /> Interactive safety guidelines for digital transactions</div>
-                  </div>
-                </div>
-                <div className="bg-slate-950 p-4 rounded-lg border border-slate-900 space-y-3">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400 font-semibold font-mono text-[10px]">Phishing Simulation Check</span>
-                    <Badge className="bg-red-500/10 text-red-400 border border-red-500/20 text-[10px]">Scam Flagged</Badge>
-                  </div>
-                  <div className="p-3 bg-red-950/10 border border-red-950/30 rounded text-[11px] space-y-2 text-slate-300">
-                    <p className="italic text-slate-400">"Your PM-KISAN subsidy is suspended. Click below to verify your Aadhaar and enter OTP."</p>
-                    <p className="text-red-400 font-semibold">// Safety Verdict: Threat. Government services do not ask for OTP verification.</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 6: AI & Technology */}
-      <section className="px-6 py-20 border-t border-slate-900 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold mb-3">Technology Stack</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Production-grade agricultural infrastructure</h3>
-            <p className="text-slate-400 leading-relaxed">
-              Engineered with reliability and modularity as design priorities.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <FiCpu className="w-6 h-6 text-emerald-400" />,
-                title: "OpenRouter Pipeline",
-                desc: "Harnessing open-source LLMs (Qwen-2.5-72B-Instruct) for reasoning operations, running prompts against dynamic inputs under strict JSON compliance."
-              },
-              {
-                icon: <FiDatabase className="w-6 h-6 text-teal-400" />,
-                title: "MongoDB Atlas State",
-                desc: "High-performance multi-tenant persistence layer housing profile properties, transaction matrices, and comprehensive advisory histories."
-              },
-              {
-                icon: <FiLayers className="w-6 h-6 text-indigo-400" />,
-                title: "Next.js App Server",
-                desc: "Utilizing Next.js 14 API routers and Server components, shielding provider secrets while minimizing browser payload latencies."
-              }
-            ].map((tech, i) => (
-              <div key={i} className="p-6 rounded-xl border border-slate-900 bg-slate-900/10 hover:border-slate-800 transition-all space-y-4">
-                <div className="p-2 w-fit rounded-lg bg-slate-950 border border-slate-850">
-                  {tech.icon}
-                </div>
-                <h4 className="text-lg font-bold text-white">{tech.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{tech.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 7: Impact & Vision */}
-      <section className="px-6 py-24 border-t border-slate-900 relative">
-        {/* Visual decoration overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-950/5 to-transparent pointer-events-none" />
-        
-        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <h2 className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold">Vision & Impact</h2>
-          <h3 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
-            Democratizing agricultural intelligence layer-by-layer
-          </h3>
-          <p className="text-slate-400 text-base md:text-lg leading-relaxed font-normal">
-            Good farm decisions shouldn't be a privilege limited to large scale corporate growers with specialized agronomist budgets. Our mission is to put the power of professional crop planning, risk management, and financial optimization directly in the pockets of everyday farmers globally.
-          </p>
-          <div className="flex justify-center gap-12 pt-6 flex-wrap">
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-extrabold text-white">Rs. 49k+</p>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Average Subsidies Identified</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-extrabold text-white">48 hrs</p>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Pest Mitigation Window</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl md:text-4xl font-extrabold text-white">100%</p>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Data Ownership Scoped</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 8: Final CTA */}
-      <section className="px-6 py-20 border-t border-slate-900 bg-slate-950/80">
-        <div className="max-w-5xl mx-auto p-8 md:p-12 rounded-2xl border border-slate-800 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-slate-950 to-slate-950 text-center space-y-6 relative overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-emerald-500/5 blur-[80px] pointer-events-none" />
-          
-          <h3 className="text-3xl md:text-4xl font-bold text-white">
-            Ready to upgrade your farm intelligence?
-          </h3>
-          <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
-            Establish your profile matrix, run localized risk optimizations, and plan cost schedules today.
-          </p>
-          <div className="pt-4">
-            <Button 
-              size="lg"
-              onClick={onGetStarted}
-              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-8 h-12 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] transition-all"
-            >
-              Start Your Intelligent Journey
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button onClick={onLoginClick} className="hidden text-sm font-medium text-slate-400 transition-colors hover:text-white sm:inline-flex">
+              Sign in
+            </button>
+            <Button onClick={onGetStarted} className="h-9 rounded-md bg-white px-4 text-sm font-semibold text-slate-950 hover:bg-emerald-100">
+              Get Started
             </Button>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Footer */}
-      <footer className="px-6 py-12 border-t border-slate-900 text-center text-xs text-slate-500 space-y-4">
-        <p>© 2026 AGROGUIA.AI Intelligence Layer. Designed for OpenAI × Outskill Hackathon.</p>
-        <p className="max-w-md mx-auto text-[10px] text-slate-605 leading-relaxed">
-          Disclaimer: Recommendations generated by the AI Advisory engine are for planning support. Verify active chemical configurations with local agronomists before application.
+      <main>
+        <section className="relative isolate min-h-[calc(100vh-65px)] border-b border-white/10 px-4 pb-12 pt-16 sm:px-6 lg:pt-20">
+          <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px]" />
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_-20%,rgba(45,212,191,0.20),transparent_42%),linear-gradient(180deg,rgba(7,16,13,0)_0%,#07100d_92%)]" />
+
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-5xl text-center">
+              <Badge className="mb-5 border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-100 hover:bg-emerald-300/10">
+                AI Infrastructure for Intelligent Agriculture
+              </Badge>
+              <h1 className="mx-auto max-w-5xl text-5xl font-semibold leading-[1.03] text-white sm:text-6xl lg:text-7xl">
+                AGROGUIA.AI
+              </h1>
+              <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
+                The operating system for farm decisions, combining advisory, pest risk, weather timing, finance, schemes, voice, and planning into one intelligent dashboard.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Button onClick={onGetStarted} size="lg" className="h-12 rounded-md bg-emerald-200 px-6 font-semibold text-slate-950 hover:bg-emerald-100">
+                  Generate AI Farm Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button onClick={onGetStarted} size="lg" variant="outline" className="h-12 rounded-md border-white/15 bg-white/[0.03] px-6 text-white hover:bg-white/10 hover:text-white">
+                  Get Started
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-12 lg:mt-14">
+              <IntelligenceConsole />
+            </div>
+
+            <div className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-3 text-xs text-slate-400 sm:grid-cols-3">
+              {[
+                ['Structured output', 'JSON advisory modules, not raw chat'],
+                ['User scoped', 'Profiles and history protected by auth'],
+                ['Voice ready', 'Summaries designed for field access'],
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-md border border-white/10 bg-white/[0.025] px-4 py-3">
+                  <span className="font-semibold text-slate-200">{title}</span>
+                  <span className="mt-1 block">{copy}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="problem" className="border-b border-white/10 bg-[#091410] px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+              <div>
+                <p className="text-sm font-medium uppercase text-emerald-200/70">The Problem</p>
+                <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+                  Farmers do not experience uncertainty as data. They experience it as irreversible loss.
+                </h2>
+              </div>
+              <p className="text-base leading-8 text-slate-400">
+                Every crop cycle repeats expensive decisions: when to spray, whether to irrigate, when to sell, what scheme deadline matters, which loan is safe, and whether an insurance claim is worth filing.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-4 lg:grid-cols-3">
+              {problemSignals.map((item) => {
+                const Icon = item.icon
+                return (
+                  <article key={item.title} className="group rounded-lg border border-white/10 bg-white/[0.035] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/25 hover:bg-white/[0.055]">
+                    <div className="mb-8 flex items-center justify-between">
+                      <span className="text-xs uppercase text-slate-500">{item.label}</span>
+                      <Icon className="h-5 w-5 text-emerald-100/80" />
+                    </div>
+                    <h3 className="text-xl font-semibold leading-snug text-white">{item.title}</h3>
+                    <p className="mt-4 text-sm leading-7 text-slate-400">{item.copy}</p>
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="solution" className="border-b border-white/10 px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div>
+              <p className="text-sm font-medium uppercase text-emerald-200/70">The Solution</p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+                A centralized agricultural intelligence platform.
+              </h2>
+              <p className="mt-6 text-base leading-8 text-slate-400">
+                AGROGUIA.AI collects farmer context once, turns it into a structured advisory packet, renders it as operational dashboard modules, and stores the history so decisions compound over time.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {solutionModules.map((module) => (
+                  <span key={module} className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-xs text-slate-300">
+                    {module}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase text-slate-500">Reasoning pipeline</p>
+                  <h3 className="mt-1 text-lg font-semibold text-white">Context to decision</h3>
+                </div>
+                <Gauge className="h-5 w-5 text-emerald-200" />
+              </div>
+              {([
+                ['Farmer profile', 'land, soil, crop, budget, language', Database],
+                ['OpenRouter reasoner', 'multi-module synthesis', BrainCircuit],
+                ['Schema enforcement', 'defaults merged for UI stability', Fingerprint],
+                ['Dashboard intelligence', 'actions, history, voice, planning', LineChart],
+              ] as IconListItem[]).map(([title, copy, StepIcon], index) => {
+                return (
+                  <div key={title} className="relative pl-10">
+                    {index < 3 && <span className="absolute left-[15px] top-9 h-9 w-px bg-white/10" />}
+                    <span className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-black/25 text-emerald-100">
+                      <StepIcon className="h-4 w-4" />
+                    </span>
+                    <div className="pb-6">
+                      <h4 className="text-sm font-semibold text-white">{title}</h4>
+                      <p className="mt-1 text-xs text-slate-500">{copy}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-white/10 bg-[#091410] px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-medium uppercase text-emerald-200/70">How It Works</p>
+              <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">From profile to farm operating rhythm.</h2>
+              <p className="mt-5 text-base leading-8 text-slate-400">The interface hides complexity while preserving a serious intelligence workflow underneath.</p>
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {workflow.map(([step, title, copy]) => (
+                <article key={step} className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+                  <div className="mb-8 font-mono text-sm text-emerald-200">{step}</div>
+                  <h3 className="text-lg font-semibold text-white">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">{copy}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="border-b border-white/10 px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+              <div>
+                <p className="text-sm font-medium uppercase text-emerald-200/70">Core Features</p>
+                <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+                  Ten modules, one decision surface.
+                </h2>
+                <p className="mt-6 text-base leading-8 text-slate-400">
+                  The product connects the practical realities of farming: biology, climate, price, policy, credit, insurance, fraud risk, and voice-first access.
+                </p>
+
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {(Object.keys(tabContent) as FeatureTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveFeatureTab(tab)}
+                      className={`rounded-md border px-3 py-2 text-xs font-medium capitalize transition-all ${
+                        activeFeatureTab === tab
+                          ? 'border-emerald-200 bg-emerald-200 text-slate-950'
+                          : 'border-white/10 bg-white/[0.035] text-slate-400 hover:border-white/20 hover:text-white'
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+                <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-center">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white">{activeTab.title}</h3>
+                    <p className="mt-4 text-sm leading-7 text-slate-400">{activeTab.copy}</p>
+                    <div className="mt-5 space-y-3">
+                      {activeTab.bullets.map((bullet) => (
+                        <div key={bullet} className="flex items-center gap-2 text-sm text-slate-300">
+                          <Check className="h-4 w-4 text-emerald-200" />
+                          {bullet}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {activeTab.panel}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {featureGrid.map(([title, copy, FeatureIcon]) => {
+                return (
+                  <article key={title as string} className="rounded-lg border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/20 hover:bg-white/[0.05]">
+                    <FeatureIcon className="h-5 w-5 text-emerald-100" />
+                    <h3 className="mt-4 text-sm font-semibold text-white">{title}</h3>
+                    <p className="mt-2 text-xs leading-5 text-slate-500">{copy}</p>
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="technology" className="border-b border-white/10 bg-[#091410] px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-medium uppercase text-emerald-200/70">AI & Technology</p>
+              <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">Built like infrastructure, presented like a product.</h2>
+              <p className="mt-5 text-base leading-8 text-slate-400">
+                The current stack keeps secrets server-side, scopes data by authenticated user, and normalizes LLM output for reliable dashboard consumption.
+              </p>
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {techStack.map(([title, copy, TechIcon]) => {
+                return (
+                  <article key={title as string} className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+                    <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-black/25 text-emerald-100">
+                      <TechIcon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">{title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-slate-400">{copy}</p>
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="vision" className="border-b border-white/10 px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <p className="text-sm font-medium uppercase text-emerald-200/70">Impact & Vision</p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+                Farmers should operate with the same decision support systems high-performing industries take for granted.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-slate-300">
+                AGROGUIA.AI is AI for confidence: a rural intelligence layer that helps protect yield, stabilize income, and turn reactive firefighting into planned operations.
+              </p>
+            </div>
+            <div className="grid gap-3">
+              {([
+                ['Reduce uncertainty', 'Translate unknowns into concrete weekly next actions.', ShieldCheck],
+                ['Democratize expertise', 'Make agronomy, finance, and policy intelligence accessible.', Landmark],
+                ['Compound decisions', 'Store advisory history so planning improves across seasons.', ReceiptText],
+              ] as IconListItem[]).map(([title, copy, VisionIcon]) => {
+                return (
+                  <div key={title as string} className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+                    <div className="flex items-start gap-4">
+                      <VisionIcon className="mt-1 h-5 w-5 shrink-0 text-emerald-100" />
+                      <div>
+                        <h3 className="font-semibold text-white">{title}</h3>
+                        <p className="mt-2 text-sm leading-6 text-slate-400">{copy}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-20 sm:px-6 lg:py-28">
+          <div className="mx-auto max-w-5xl rounded-lg border border-emerald-300/20 bg-[linear-gradient(135deg,rgba(16,185,129,0.18),rgba(255,255,255,0.04)_45%,rgba(45,212,191,0.12))] p-8 text-center sm:p-12">
+            <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-md border border-emerald-200/30 bg-emerald-200/10 text-emerald-100">
+              <LockKeyhole className="h-6 w-6" />
+            </div>
+            <h2 className="mx-auto max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              Start building your AI farm intelligence system.
+            </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-300">
+              Create your profile, generate your first structured advisory, and open the dashboard where crop, risk, finance, and voice intelligence work together.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button onClick={onGetStarted} size="lg" className="h-12 rounded-md bg-emerald-200 px-6 font-semibold text-slate-950 hover:bg-white">
+                Generate Your Smart Farming Dashboard
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button onClick={onLoginClick} size="lg" variant="outline" className="h-12 rounded-md border-white/15 bg-black/20 px-6 text-white hover:bg-white/10 hover:text-white">
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/10 px-4 py-8 text-center text-xs text-slate-500 sm:px-6">
+        <p>© 2026 AGROGUIA.AI Intelligence Layer. Built for OpenAI x Outskill Hackathon.</p>
+        <p className="mx-auto mt-3 max-w-2xl leading-6">
+          Advisory outputs support planning and should be verified with local agronomists, official scheme offices, and current field conditions before action.
         </p>
       </footer>
     </div>
