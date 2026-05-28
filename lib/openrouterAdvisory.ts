@@ -1,12 +1,12 @@
 import { DEFAULT_ADVISORY, mergeAdvisoryWithDefaults, type AdvisoryPayload } from "@/lib/advisoryDefaults";
 
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const OPENAI_MODEL = process.env.OPENAI_ADVISORY_MODEL || "gpt-4.1-mini";
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "qwen/qwen-2.5-72b-instruct";
 
-function getOpenAIKey(): string {
-  const key = process.env.OPENAI_API_KEY;
+function getOpenRouterKey(): string {
+  const key = process.env.OPENROUTER_API_KEY;
   if (!key) {
-    throw new Error("Missing OPENAI_API_KEY environment variable");
+    throw new Error("Missing OPENROUTER_API_KEY environment variable");
   }
   return key;
 }
@@ -30,7 +30,7 @@ function extractJsonObject(text: string): any | null {
 
 function buildSystemPrompt(): string {
   return [
-    "You are KISAN.AI farm advisory engine.",
+    "You are AGROGUIA.AI farm advisory engine.",
     "Return only valid JSON (no markdown).",
     "Produce realistic Indian agriculture advisory output for dashboard consumption.",
     "Include these top-level keys exactly:",
@@ -49,21 +49,21 @@ function buildUserPrompt(message: string): string {
   ].join("\n");
 }
 
-export async function generateAdvisoryFromOpenAI(message: string): Promise<{
+export async function generateAdvisoryFromOpenRouter(message: string): Promise<{
   advisory: AdvisoryPayload;
   rawText?: string;
   error?: string;
 }> {
   try {
-    const apiKey = getOpenAIKey();
-    const response = await fetch(OPENAI_API_URL, {
+    const apiKey = getOpenRouterKey();
+    const response = await fetch(OPENROUTER_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
+        model: OPENROUTER_MODEL,
         temperature: 0.4,
         messages: [
           { role: "system", content: buildSystemPrompt() },
@@ -76,7 +76,7 @@ export async function generateAdvisoryFromOpenAI(message: string): Promise<{
       const errText = await response.text();
       return {
         advisory: DEFAULT_ADVISORY,
-        error: `OpenAI request failed (${response.status})`,
+        error: `OpenRouter request failed (${response.status})`,
         rawText: errText,
       };
     }
@@ -86,7 +86,7 @@ export async function generateAdvisoryFromOpenAI(message: string): Promise<{
     if (!content || typeof content !== "string") {
       return {
         advisory: DEFAULT_ADVISORY,
-        error: "OpenAI response missing content",
+        error: "OpenRouter response missing content",
       };
     }
 
@@ -106,7 +106,7 @@ export async function generateAdvisoryFromOpenAI(message: string): Promise<{
   } catch (error: any) {
     return {
       advisory: DEFAULT_ADVISORY,
-      error: error?.message || "OpenAI advisory generation failed",
+      error: error?.message || "OpenRouter advisory generation failed",
     };
   }
 }

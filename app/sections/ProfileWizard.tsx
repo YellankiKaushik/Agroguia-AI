@@ -110,8 +110,8 @@ export default function ProfileWizard({ onSave, saving, userName, saveError }: P
     if (step === 1 && typeof window !== 'undefined') {
       const timer = setTimeout(() => {
         const u = new SpeechSynthesisUtterance(
-          lang === 'kn' ? 'Namaskara. FarmerOS nimma vaiyaktika krishi salahagara. Nimmma hottavannu set up maadona.'
-            : 'Welcome to FarmerOS. Your personal farm advisor. Let us set up your farm.'
+          lang === 'kn' ? 'Namaskara. AGROGUIA.AI nimma vaiyaktika krishi salahagara. Nimmma hottavannu set up maadona.'
+            : 'Welcome to AGROGUIA.AI. Your personal farm advisor. Let us set up your farm.'
         )
         u.lang = speechLang
         window.speechSynthesis.speak(u)
@@ -132,7 +132,7 @@ export default function ProfileWizard({ onSave, saving, userName, saveError }: P
       <Card className="w-full max-w-lg bg-card/90 backdrop-blur-lg border-border shadow-xl">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold text-primary">FarmerOS</CardTitle>
+            <CardTitle className="text-xl font-bold text-primary">AGROGUIA.AI</CardTitle>
             <span className="text-xs text-muted-foreground">Step {step} of {TOTAL_STEPS}</span>
           </div>
           {/* Progress bar */}
@@ -152,7 +152,7 @@ export default function ProfileWizard({ onSave, saving, userName, saveError }: P
               </div>
               <h3 className="text-lg font-semibold text-foreground">Namaskara</h3>
               <p className="text-sm text-muted-foreground">
-                FarmerOS is your personal farm advisor. Let&apos;s set up your farm in a few simple steps.
+                AGROGUIA.AI is your personal farm advisor. Let&apos;s set up your farm in a few simple steps.
               </p>
               <div className="pt-2">
                 <p className="text-xs text-muted-foreground mb-2">{t('profile_choose_language')}</p>
@@ -395,3 +395,4 @@ export default function ProfileWizard({ onSave, saving, userName, saveError }: P
     </div>
   )
 }
+

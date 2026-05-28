@@ -48,7 +48,7 @@ const fetchWrapper = async (...args) => {
           if (bodyStr.includes("tool_auth") && isInIframe()) {
             // Structured response (HTTP 401 from proxy)
             const detail = body?.detail;
-            // Stringified error (HTTP 200 from Lyzr async task)
+            // Stringified error (HTTP 200 from an async tool task)
             const errorStr = body?.error || body?.response?.message || "";
 
             const toolName = detail?.tool_name || errorStr.match?.(/['"]tool_name['"]:\s*['"]([^'"]+)['"]/)?.[1];
@@ -122,3 +122,4 @@ const fetchWrapper = async (...args) => {
 };
 
 export default fetchWrapper;
+

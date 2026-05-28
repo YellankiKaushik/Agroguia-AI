@@ -16,7 +16,7 @@ export function formatIndianNumber(num: number | string, _lang: Language): strin
 export const translations: Record<Language, Record<string, string>> = {
   en: {
     // App
-    app_title: 'FarmerOS',
+    app_title: 'AGROGUIA.AI',
     app_tagline: 'Your complete farm advisory platform',
     loading_profile: 'Loading profile...',
     sample_data: 'Sample Data',
@@ -30,7 +30,7 @@ export const translations: Record<Language, Record<string, string>> = {
     auth_login: 'Login',
     auth_register: 'Register',
     // Profile wizard
-    profile_welcome: 'Welcome to FarmerOS',
+    profile_welcome: 'Welcome to AGROGUIA.AI',
     profile_choose_language: 'Choose your language',
     profile_step_of: 'Step {step} of 3',
     profile_farm_details: 'Farm Details',
@@ -263,7 +263,7 @@ export const translations: Record<Language, Record<string, string>> = {
     agent_waste_role: 'Waste monetization & buyers',
   },
   hi: {
-    app_title: 'FarmerOS',
+    app_title: 'AGROGUIA.AI',
     app_tagline: 'आपका संपूर्ण कृषि सलाहकार मंच',
     loading_profile: 'प्रोफ़ाइल लोड हो रही है...',
     sample_data: 'नमूना डेटा',
@@ -274,7 +274,7 @@ export const translations: Record<Language, Record<string, string>> = {
     nav_settings: 'सेटिंग्स',
     auth_login: 'लॉगिन',
     auth_register: 'रजिस्टर',
-    profile_welcome: 'FarmerOS में आपका स्वागत है',
+    profile_welcome: 'AGROGUIA.AI में आपका स्वागत है',
     profile_choose_language: 'अपनी भाषा चुनें',
     profile_step_of: 'चरण {step} / 3',
     profile_farm_details: 'खेत का विवरण',
@@ -489,7 +489,7 @@ export const translations: Record<Language, Record<string, string>> = {
     agent_waste_role: 'कचरा मुद्रीकरण और खरीदार',
   },
   kn: {
-    app_title: 'FarmerOS',
+    app_title: 'AGROGUIA.AI',
     app_tagline: 'ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಕೃಷಿ ಸಲಹಾ ವೇದಿಕೆ',
     loading_profile: 'ಪ್ರೊಫೈಲ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
     sample_data: 'ಮಾದರಿ ಡೇಟಾ',
@@ -500,7 +500,7 @@ export const translations: Record<Language, Record<string, string>> = {
     nav_settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
     auth_login: 'ಲಾಗಿನ್',
     auth_register: 'ನೋಂದಣಿ',
-    profile_welcome: 'FarmerOS ಗೆ ಸ್ವಾಗತ',
+    profile_welcome: 'AGROGUIA.AI ಗೆ ಸ್ವಾಗತ',
     profile_choose_language: 'ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
     profile_step_of: 'ಹಂತ {step} / 3',
     profile_farm_details: 'ಕೃಷಿ ವಿವರಗಳು',
@@ -715,7 +715,7 @@ export const translations: Record<Language, Record<string, string>> = {
     agent_waste_role: 'ತ್ಯಾಜ್ಯ ಹಣಗಳಿಕೆ ಮತ್ತು ಖರೀದಿದಾರರು',
   },
   te: {
-    app_title: 'FarmerOS',
+    app_title: 'AGROGUIA.AI',
     app_tagline: 'మీ సంపూర్ణ వ్యవసాయ సలహా వేదిక',
     loading_profile: 'ప్రొఫైల్ లోడ్ అవుతోంది...',
     sample_data: 'నమూనా డేటా',
@@ -726,7 +726,7 @@ export const translations: Record<Language, Record<string, string>> = {
     nav_settings: 'సెట్టింగ్‌లు',
     auth_login: 'లాగిన్',
     auth_register: 'రిజిస్టర్',
-    profile_welcome: 'FarmerOS కి స్వాగతం',
+    profile_welcome: 'AGROGUIA.AI కి స్వాగతం',
     profile_choose_language: 'మీ భాషను ఎంచుకోండి',
     profile_step_of: 'దశ {step} / 3',
     profile_farm_details: 'పొల వివరాలు',
@@ -941,3 +941,4 @@ export const translations: Record<Language, Record<string, string>> = {
     agent_waste_role: 'వ్యర్థ ద్రవ్యీకరణ మరియు కొనుగోలుదారులు',
   },
 }
+

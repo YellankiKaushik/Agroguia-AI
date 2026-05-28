@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Forward the request to Lyzr API
+    // Forward the request to LYZR API
     const uploadFormData = new FormData()
     for (const file of files) {
       if (file instanceof File) {
@@ -120,3 +120,4 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+

@@ -366,7 +366,7 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
               <Badge key={name} variant="outline" className="text-xs py-0">{name}</Badge>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Powered by KISAN.AI Intelligence Engine</p>
+          <p className="text-xs text-muted-foreground mt-2">Powered by AGROGUIA.AI Intelligence Engine</p>
         </div>
       </aside>
 
@@ -531,3 +531,4 @@ export default function Page() {
     </ErrorBoundary>
   )
 }
+

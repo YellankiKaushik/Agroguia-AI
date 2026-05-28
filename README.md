@@ -1,108 +1,81 @@
-# 🌾 AGROGUIA.AI
+# AGROGUIA.AI
 
-> **AI-powered farm advisory platform for Indian farmers**
+AI-powered farm advisory platform for Indian farmers.
 
-AGROGUIA.AI delivers hyper-personalized farm intelligence — weather alerts, pest risk detection, market prices, government scheme eligibility, insurance guidance, and loan advisory — all powered by OpenAI GPT and built on a standalone Next.js + MongoDB stack.
+AGROGUIA.AI delivers personalized farm intelligence for weather alerts, pest risk, protection planning, market guidance, government schemes, insurance, loans, and advisory history. The app runs as a standalone Next.js + MongoDB stack, uses standalone JWT auth, and generates advisories through OpenRouter open-source models.
 
----
+## Tech Stack
 
-## ✨ Features
+- Frontend: Next.js 14 App Router, React 18, Tailwind CSS, shadcn/ui
+- Backend: Next.js API routes
+- AI engine: OpenRouter via direct API calls
+- Database: MongoDB Atlas through Mongoose
+- Auth: JWT cookies + bcrypt
+- Language: TypeScript
 
-| Module | What It Does |
-|--------|-------------|
-| 🌤️ Weather Advisory | Daily actionable alerts based on crop stage |
-| 🐛 Pest & Disease | Risk detection with immediate action plans |
-| 💊 Protection Plan | Spray & fertilizer schedule within budget |
-| 📈 Market Intelligence | Mandi price comparison & sell/wait guidance |
-| 🏛️ Government Schemes | Eligibility check for PM-KISAN, PMFBY, etc. |
-| 🛡️ Insurance | PMFBY claim eligibility & document checklist |
-| 🏦 Loan Advisory | KCC vs local NBFC comparison |
-| 🚨 Fraud Awareness | Digital safety tips & scam scenarios |
-| ♻️ Waste Value | Crop residue monetization opportunities |
-| 🔊 Voice Summary | Audio-ready advisory summaries |
+## Quick Start
 
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 14 (App Router), React 18, Tailwind CSS, shadcn/ui
-- **Backend**: Next.js API Routes (serverless)
-- **AI Engine**: OpenAI GPT (via direct API — no vendor SDK)
-- **Database**: MongoDB (Mongoose)
-- **Auth**: JWT + bcrypt (standalone, no third-party auth)
-- **Language**: TypeScript
-
----
-
-## 🚀 Quick Start
-
-### 1. Clone the repo
-```bash
-git clone https://github.com/YellankiKaushik/Agroguia-AI.git
-cd Agroguia-AI
-```
-
-### 2. Install dependencies
 ```bash
 npm install
-```
-
-### 3. Set up environment variables
-```bash
 cp .env.example .env.local
-```
-Then open `.env.local` and fill in:
-- `OPENAI_API_KEY` — get from https://platform.openai.com/api-keys
-- `DATABASE_URL` — MongoDB connection string (free tier: https://mongodb.com/atlas)
-- `JWT_SECRET` — any random 32-char string
-
-### 4. Run the development server
-```bash
 npm run dev
 ```
 
-Open → **http://localhost:3333**
+Open http://localhost:3333.
 
----
+## Environment Variables
 
-## 📁 Project Structure
+Fill these values in `.env.local`. Do not commit `.env` or `.env.local`.
 
-```
-├── app/
-│   ├── page.tsx              # Main dashboard
-│   ├── layout.tsx            # App shell
-│   └── api/
-│       ├── agent/            # OpenAI advisory endpoint
-│       ├── auth/             # Login / Register / Logout
-│       ├── farmer-profiles/  # Farmer profile CRUD
-│       └── advisory-history/ # Past advisory storage
-├── app/sections/             # Dashboard UI sections
-├── components/               # Shared UI components (shadcn/ui)
-├── lib/
-│   ├── openaiAdvisory.ts     # OpenAI integration
-│   ├── auth.ts               # JWT helpers
-│   └── db.ts                 # MongoDB connection
-├── models/                   # Mongoose data models
-└── .env.example              # Environment template
+- `OPENROUTER_API_KEY`: OpenRouter key from https://openrouter.ai/keys
+- `OPENROUTER_MODEL`: optional model override, default `qwen/qwen-2.5-72b-instruct`
+- `DATABASE_URL`: your MongoDB Atlas connection string
+- `JWT_SECRET`: random secret used to sign login sessions
+- `APP_JWT_SECRET`: optional fallback JWT secret; keep it equal to `JWT_SECRET` if used
+
+MongoDB Atlas format:
+
+```env
+DATABASE_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority
 ```
 
----
+Include the database name in the URL, for example `/agroguia`. Do not include old DocumentDB-only options such as `tlsCAFile`.
 
-## 🔐 Environment Variables
+## Database Ownership
 
-See `.env.example` for all required variables. **Never commit `.env` or `.env.local`.**
+All app persistence goes through `DATABASE_URL` in [lib/db.ts](</c:/Users/YellankiKaushik/Desktop/Projects/OpenAI x Outskill Hackathon/extractted files/lib/db.ts>). The current Mongoose models are preserved:
 
----
+- `User`: standalone auth accounts
+- `FarmerProfile`: farmer profile and crop context
+- `AdvisoryHistory`: saved generated advisories
+- `FertilizerTracker`: fertilizer application records
+- `SchemeEnrollment`: scheme enrollment records
 
-## 🧪 Testing the App
+The API routes reuse one cached Mongoose connection in local Next.js dev mode and store records with the authenticated user's existing `user_id` field.
 
-1. Register an account at `/`
-2. Fill in your farmer profile (crop, location, land size)
-3. Toggle **Sample Data** to preview advisory immediately
-4. Click **Generate Advisory** for a real AI-generated farm plan
+## Project Structure
 
----
+```text
+app/
+  api/
+    agent/              OpenRouter advisory endpoint
+    auth/               Register, login, logout, session check
+    farmer-profiles/    Farmer profile CRUD
+    advisory-history/   Advisory history persistence
+    fertilizer-tracker/ Fertilizer tracking persistence
+    scheme-enrollments/ Scheme enrollment persistence
+  page.tsx              Main dashboard
+lib/
+  auth.ts               JWT helpers
+  db.ts                 MongoDB Atlas/Mongoose connection
+  openrouterAdvisory.ts OpenRouter integration
+models/                 Mongoose schemas
+```
 
-## 📄 License
+## Validation Flow
 
-MIT — built for the OpenAI × Outskill Hackathon 2026.
+1. Register an account.
+2. Log in with the same account.
+3. Save a farmer profile.
+4. Generate an advisory.
+5. Refresh the page and confirm profile and advisory history still load.

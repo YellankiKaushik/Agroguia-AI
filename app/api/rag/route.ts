@@ -1,7 +1,7 @@
 /**
  * Server-side RAG Knowledge Base API Route
  *
- * This route proxies requests to the Lyzr RAG API v3 (https://rag-prod.studio.lyzr.ai)
+ * This route proxies requests to the LYZR RAG API v3 (https://rag-prod.studio.lyzr.ai)
  * Full API spec: https://rag-prod.studio.lyzr.ai/docs
  *
  * CRITICAL API SPECIFICATIONS:
@@ -340,3 +340,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

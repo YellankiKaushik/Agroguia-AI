@@ -1,5 +1,5 @@
 # ============================================================
-#  KISAN.AI — One-Click Startup Script
+#  AGROGUIA.AI — One-Click Startup Script
 #  Run this every time you want to start the app locally.
 #  How to run:  Right-click → "Run with PowerShell"
 #               OR open PowerShell here and type:  .\START.ps1
@@ -7,7 +7,7 @@
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "   KISAN.AI — Starting Dev Server" -ForegroundColor Green
+Write-Host "   AGROGUIA.AI — Starting Dev Server" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
 
@@ -22,17 +22,27 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 $nodeVersion = node --version
 Write-Host "[OK] Node.js found: $nodeVersion" -ForegroundColor Cyan
 
-# Step 2: Check if OPENAI_API_KEY is set
+# Step 2: Check if required environment values are set
 $envContent = Get-Content ".env.local" -ErrorAction SilentlyContinue
-$hasKey = $envContent | Where-Object { $_ -match "^OPENAI_API_KEY=sk-" }
-if (-not $hasKey) {
+$hasOpenRouterKey = $envContent | Where-Object { $_ -match "^OPENROUTER_API_KEY=.+" -and $_ -notmatch "your-openrouter-api-key-here" }
+$hasDatabaseUrl = $envContent | Where-Object { $_ -match "^DATABASE_URL=mongodb(\+srv)?://" }
+if (-not $hasOpenRouterKey) {
     Write-Host ""
-    Write-Host "[WARNING] OPENAI_API_KEY is not set or still a placeholder!" -ForegroundColor Yellow
+    Write-Host "[WARNING] OPENROUTER_API_KEY is not set or still a placeholder!" -ForegroundColor Yellow
     Write-Host "  Open .env.local and replace:" -ForegroundColor Yellow
-    Write-Host "    OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE" -ForegroundColor Gray
-    Write-Host "  with your real key from: https://platform.openai.com/api-keys" -ForegroundColor Gray
+    Write-Host "    OPENROUTER_API_KEY=your-openrouter-api-key-here" -ForegroundColor Gray
+    Write-Host "  with your real key from: https://openrouter.ai/keys" -ForegroundColor Gray
     Write-Host ""
     Write-Host "  The app will still start, but AI advisory generation will fail." -ForegroundColor Yellow
+    Write-Host ""
+}
+if (-not $hasDatabaseUrl) {
+    Write-Host ""
+    Write-Host "[WARNING] DATABASE_URL is missing or is not a MongoDB connection string." -ForegroundColor Yellow
+    Write-Host "  Add your MongoDB Atlas connection string to .env.local:" -ForegroundColor Yellow
+    Write-Host "    DATABASE_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "  Auth, CRUD, and advisory history persistence need this value." -ForegroundColor Yellow
     Write-Host ""
 }
 
@@ -66,3 +76,4 @@ Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
 
 npm run dev
+

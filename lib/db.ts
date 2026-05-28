@@ -1,25 +1,5 @@
 import mongoose from "mongoose";
 
-const DATABASE_URL = process.env.DATABASE_URL;
-
-if (!DATABASE_URL) {
-  throw new Error("Missing DATABASE_URL environment variable");
-}
-
-/**
- * Strip Windows-incompatible tlsCAFile parameter from the connection URL.
- * The Lyzr/Architect-hosted DB used /tmp/docdb-ca-bundle.pem (Linux-only).
- * When running locally on Windows we remove it and rely on tlsAllowInvalidHostnames.
- */
-function sanitizeMongoUrl(url: string): string {
-  try {
-    // Remove the tlsCAFile param regardless of OS — the CA file isn't present locally
-    return url.replace(/&?tlsCAFile=[^&]*/g, "").replace(/\?&/, "?");
-  } catch {
-    return url;
-  }
-}
-
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -41,20 +21,37 @@ if (!globalCache.mongooseCache) {
   globalCache.mongooseCache = cached;
 }
 
+function getDatabaseUrl(): string {
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+
+  if (!databaseUrl) {
+    throw new Error("Missing DATABASE_URL environment variable");
+  }
+
+  if (!/^mongodb(\+srv)?:\/\//.test(databaseUrl)) {
+    throw new Error("DATABASE_URL must be a MongoDB connection string");
+  }
+
+  return databaseUrl;
+}
+
 export async function connectDB(): Promise<typeof mongoose> {
-  if (cached.conn) {
+  if (cached.conn && cached.conn.connection.readyState === 1) {
     return cached.conn;
   }
 
   if (!cached.promise) {
-    const cleanUrl = sanitizeMongoUrl(DATABASE_URL);
-    cached.promise = mongoose.connect(cleanUrl, {
-      // Allow connection without verifying server certificate locally
-      tlsAllowInvalidCertificates: true,
-      serverSelectionTimeoutMS: 8000,
-    });
+    cached.promise = mongoose
+      .connect(getDatabaseUrl(), {
+        serverSelectionTimeoutMS: 10000,
+      })
+      .catch((error) => {
+        cached.promise = null;
+        throw error;
+      });
   }
 
   cached.conn = await cached.promise;
   return cached.conn;
 }
+

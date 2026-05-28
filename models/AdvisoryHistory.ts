@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import { Schema, models, model, type Model } from "mongoose";
 import { connectDB } from "@/lib/db";
 
 const AdvisoryHistorySchema = new Schema({
@@ -18,7 +18,7 @@ const AdvisoryHistorySchema = new Schema({
   farmer_summary: { type: String },
 });
 
-type AdvisoryHistoryModelType = ReturnType<typeof model>;
+type AdvisoryHistoryModelType = Model<any>;
 
 export default async function getAdvisoryHistoryModel(): Promise<AdvisoryHistoryModelType> {
   await connectDB();

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     const Model = await getFertilizerTrackerModel();
-    const docs = await Model.find();
+    const docs = await Model.find({ user_id: userId });
     return NextResponse.json({ success: true, data: docs });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const Model = await getFertilizerTrackerModel();
-    const doc = await Model.create({ ...body, owner_user_id: userId });
+    const doc = await Model.create({ ...body, user_id: userId });
     return NextResponse.json({ success: true, data: doc });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

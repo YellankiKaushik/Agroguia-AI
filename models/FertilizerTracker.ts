@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import { Schema, models, model, type Model } from "mongoose";
 import { connectDB } from "@/lib/db";
 
 const FertilizerTrackerSchema = new Schema({
@@ -9,7 +9,7 @@ const FertilizerTrackerSchema = new Schema({
   total_applied_vs_recommended: { type: String },
 });
 
-type FertilizerTrackerModelType = ReturnType<typeof model>;
+type FertilizerTrackerModelType = Model<any>;
 
 export default async function getFertilizerTrackerModel(): Promise<FertilizerTrackerModelType> {
   await connectDB();

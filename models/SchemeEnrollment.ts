@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import { Schema, models, model, type Model } from "mongoose";
 import { connectDB } from "@/lib/db";
 
 const SchemeEnrollmentSchema = new Schema({
@@ -9,7 +9,7 @@ const SchemeEnrollmentSchema = new Schema({
   benefit_amount: { type: String },
 });
 
-type SchemeEnrollmentModelType = ReturnType<typeof model>;
+type SchemeEnrollmentModelType = Model<any>;
 
 export default async function getSchemeEnrollmentModel(): Promise<SchemeEnrollmentModelType> {
   await connectDB();

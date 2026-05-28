@@ -1,4 +1,4 @@
-import { Schema, models, model } from "mongoose";
+import { Schema, models, model, type Model } from "mongoose";
 import { connectDB } from "@/lib/db";
 
 const UserSchema = new Schema(
@@ -11,7 +11,7 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-type UserModelType = ReturnType<typeof model>;
+type UserModelType = Model<any>;
 
 export default async function getUserModel(): Promise<UserModelType> {
   await connectDB();

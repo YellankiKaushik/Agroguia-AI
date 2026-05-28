@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateAdvisoryFromOpenAI } from "@/lib/openaiAdvisory";
+import { generateAdvisoryFromOpenRouter } from "@/lib/openrouterAdvisory";
 import { mergeAdvisoryWithDefaults } from "@/lib/advisoryDefaults";
 
 type NormalizedAgentResponse = {
@@ -22,7 +22,8 @@ function makeResponsePayload(
     result: mergeAdvisoryWithDefaults(advisory),
     message: warning || "Advisory generated successfully",
     metadata: {
-      engine: "openai-sync",
+      engine: "openrouter-sync",
+      provider: "openrouter",
       agent_id: agent_id || "local-advisory-engine",
       user_id: user_id || null,
       session_id: session_id || null,
@@ -53,7 +54,7 @@ async function handleSubmit(body: any) {
     );
   }
 
-  const { advisory, error, rawText } = await generateAdvisoryFromOpenAI(String(message));
+  const { advisory, error, rawText } = await generateAdvisoryFromOpenRouter(String(message));
   const payload = makeResponsePayload(advisory, agent_id, user_id, session_id, error, rawText);
   return NextResponse.json(payload);
 }

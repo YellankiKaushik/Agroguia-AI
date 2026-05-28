@@ -55,3 +55,9 @@ desktop.ini
 # ─── Cache ───────────────────────────────────────────────────
 .cache/
 *.tgz
+
+# ─── Miscellaneous / Project Junk ─────────────────────────────
+pnpm-lock.yaml
+pnpm-workspace.yaml
+structure.txt
+

@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import { Schema, models, model, type Model } from "mongoose";
 import { connectDB } from "@/lib/db";
 
 const FarmerProfileSchema = new Schema({
@@ -21,7 +21,7 @@ const FarmerProfileSchema = new Schema({
   phone: { type: String },
 });
 
-type FarmerProfileModelType = ReturnType<typeof model>;
+type FarmerProfileModelType = Model<any>;
 
 export default async function getFarmerProfileModel(): Promise<FarmerProfileModelType> {
   await connectDB();
