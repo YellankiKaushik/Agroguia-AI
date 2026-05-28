@@ -21,7 +21,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3333.
+Open `http://localhost:3333`.
 
 ## Environment Variables
 
