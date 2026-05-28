@@ -12,6 +12,7 @@ import { FiMenu, FiHome, FiUser, FiClock, FiSettings, FiFileText, FiRefreshCw, F
 import ProfileWizard from './sections/ProfileWizard'
 import type { FarmerProfileData } from './sections/ProfileWizard'
 import DashboardTabs from './sections/DashboardTabs'
+import LandingPage from './sections/LandingPage'
 import DashboardHero from './sections/DashboardHero'
 import CropTimeline from './sections/CropTimeline'
 import FinancialDashboard from './sections/FinancialDashboard'
@@ -115,7 +116,7 @@ type AuthUser = {
   username?: string
 }
 
-function AuthScreen({ onAuthSuccess }: { onAuthSuccess: (user: AuthUser) => void }) {
+function AuthScreen({ onAuthSuccess, onBackToLanding }: { onAuthSuccess: (user: AuthUser) => void; onBackToLanding?: () => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [emailOrUsername, setEmailOrUsername] = useState('')
@@ -190,6 +191,11 @@ function AuthScreen({ onAuthSuccess }: { onAuthSuccess: (user: AuthUser) => void
             <button type="button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-full text-xs text-primary hover:underline">
               {mode === 'login' ? 'Create an account' : 'Already have an account? Login'}
             </button>
+            {onBackToLanding && (
+              <button type="button" onClick={onBackToLanding} className="w-full text-xs text-muted-foreground hover:text-foreground hover:underline mt-2">
+                Back to Home
+              </button>
+            )}
           </form>
         </CardContent>
       </Card>
@@ -483,6 +489,7 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
 export default function Page() {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const [authLoading, setAuthLoading] = useState(true)
+  const [authMode, setAuthMode] = useState<'landing' | 'auth'>('landing')
 
   const loadCurrentUser = useCallback(async () => {
     setAuthLoading(true)
@@ -523,8 +530,16 @@ export default function Page() {
             </div>
           ) : authUser ? (
             <AppShell currentUser={authUser} onLogout={handleLogout} />
+          ) : authMode === 'landing' ? (
+            <LandingPage 
+              onGetStarted={() => setAuthMode('auth')} 
+              onLoginClick={() => setAuthMode('auth')} 
+            />
           ) : (
-            <AuthScreen onAuthSuccess={setAuthUser} />
+            <AuthScreen 
+              onAuthSuccess={setAuthUser} 
+              onBackToLanding={() => setAuthMode('landing')} 
+            />
           )}
         </LanguageProvider>
       </div>
