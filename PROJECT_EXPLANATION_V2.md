@@ -945,7 +945,7 @@ Secrets remain server-side:
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `APP_JWT_SECRET`
-- `LYZR_API_KEY`
+- `kk_API_KEY`
 
 The browser never receives provider keys.
 
@@ -1504,19 +1504,19 @@ The system is compatible with a Vercel-style Next.js deployment because:
 
 ## 16.1 Early Platform Direction
 
-The project contains traces of a previous vendor-agent architecture, including legacy references to LYZR RAG, scheduler, uploads, and voice-agent identifiers.
+The project contains traces of a previous vendor-agent architecture, including legacy references to kk RAG, scheduler, uploads, and voice-agent identifiers.
 
 This reflects an evolution from external orchestration toward a more independent full-stack product.
 
-## 16.2 Migration From Lyzr-Centric Orchestration
+## 16.2 Migration From kk-Centric Orchestration
 
-The current primary advisory path no longer depends on LYZR agent orchestration. The active advisory engine is:
+The current primary advisory path no longer depends on kk agent orchestration. The active advisory engine is:
 
 ```text
 Client -> /api/agent -> OpenRouter -> normalized advisory
 ```
 
-LYZR remains as optional extension surfaces:
+kk remains as optional extension surfaces:
 
 - RAG proxy.
 - Scheduler proxy.
@@ -1639,7 +1639,7 @@ Tradeoff:
 
 Issue:
 
-- OpenRouter, LYZR services, and MongoDB are external runtime dependencies.
+- OpenRouter, kk services, and MongoDB are external runtime dependencies.
 
 Solution:
 
