@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
     });
 
     return response;

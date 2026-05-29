@@ -4,7 +4,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { FiMic, FiPlay, FiSquare, FiPhoneOff } from 'react-icons/fi'
+import { AlertTriangle, Mic, PhoneOff, Play, Square } from 'lucide-react'
 import { useLanguage } from './LanguageContext'
 
 const VOICE_AGENT_ID = '69ec55d4a57e78ed3c81ed7c'
@@ -29,13 +29,6 @@ export default function VoiceUpdate({ voiceSummary }: VoiceUpdateProps) {
   const streamRef = useRef<MediaStream | null>(null)
   const nextPlayTimeRef = useRef(0)
   const isMutedRef = useRef(false)
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      endVoiceCall()
-    }
-  }, [])
 
   const playTTS = () => {
     if (typeof window === 'undefined') return
@@ -113,7 +106,10 @@ export default function VoiceUpdate({ voiceSummary }: VoiceUpdateProps) {
           const s = Math.max(-1, Math.min(1, input[i]))
           pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF
         }
-        const b64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)))
+        const bytes = new Uint8Array(pcm16.buffer)
+        let binary = ''
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+        const b64 = btoa(binary)
         ws.send(JSON.stringify({ type: 'audio', audio: b64, sampleRate }))
       }
 
@@ -185,23 +181,37 @@ export default function VoiceUpdate({ voiceSummary }: VoiceUpdateProps) {
     setVoiceStatus('')
   }, [])
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      endVoiceCall()
+    }
+  }, [endVoiceCall])
+
   const langLabel = lang === 'kn' ? 'Kannada' : lang === 'hi' ? 'Hindi' : lang === 'te' ? 'Telugu' : 'English'
+  const voiceHasError = /error|failed|unavailable/i.test(voiceStatus)
 
   return (
-    <Card className="bg-card/80 backdrop-blur-lg border-border">
-      <CardContent className="py-4">
-        <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-          <FiMic className="h-4 w-4 text-primary" />
-          VOICE UPDATE
-        </h3>
-        <div className="flex flex-col sm:flex-row gap-3">
+    <Card className="rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl transition-all duration-300 hover:border-emerald-300/20 hover:bg-white/[0.05]">
+      <CardContent className="p-5">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase text-emerald-200/70">Voice-first advisory</p>
+            <h3 className="mt-1 flex items-center gap-2 text-sm font-semibold text-white">
+              <Mic className="h-4 w-4 text-emerald-200" />
+              Voice update
+            </h3>
+          </div>
+          <Badge variant="outline" className="border-white/10 bg-black/25 text-xs text-slate-400">{langLabel}</Badge>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
           {/* TTS play button */}
           <Button
             onClick={ttsPlaying ? stopTTS : playTTS}
-            className={`gap-2 ${ttsPlaying ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white`}
+            className={`h-11 gap-2 rounded-md font-semibold transition-all duration-300 ${ttsPlaying ? 'bg-red-500/15 text-red-200 hover:bg-red-500/20' : 'bg-emerald-200 text-slate-950 hover:bg-emerald-100'}`}
             size="lg"
           >
-            {ttsPlaying ? <FiSquare className="h-4 w-4" /> : <FiPlay className="h-4 w-4" />}
+            {ttsPlaying ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {ttsPlaying ? 'Stop' : `Play in ${langLabel}`}
           </Button>
 
@@ -209,26 +219,29 @@ export default function VoiceUpdate({ voiceSummary }: VoiceUpdateProps) {
           <Button
             onClick={voiceCallActive ? endVoiceCall : startVoiceCall}
             variant={voiceCallActive ? 'destructive' : 'outline'}
-            className="gap-2"
+            className="h-11 gap-2 rounded-md border-white/15 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white"
             size="lg"
           >
-            {voiceCallActive ? <FiPhoneOff className="h-4 w-4" /> : <FiMic className="h-4 w-4" />}
+            {voiceCallActive ? <PhoneOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
             {voiceCallActive ? 'End Voice Call' : 'Talk to Advisor'}
           </Button>
         </div>
 
         {/* Voice call status */}
         {voiceStatus && (
-          <div className="mt-3 flex items-center gap-2">
-            {voiceCallActive && <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
-            <Badge variant="outline" className="text-xs">{voiceStatus}</Badge>
+          <div role="status" aria-live="polite" className={`mt-4 rounded-lg border p-3 text-xs ${voiceHasError ? 'border-red-400/20 bg-red-950/20 text-red-100' : 'border-emerald-300/15 bg-emerald-300/[0.055] text-emerald-100'}`}>
+            <div className="flex items-center gap-2">
+              {voiceHasError ? <AlertTriangle className="h-3.5 w-3.5" /> : voiceCallActive && <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />}
+              <span>{voiceStatus}</span>
+            </div>
+            {voiceHasError && <p className="mt-1 text-red-200/70">Voice advisory is optional. You can continue using the written dashboard intelligence.</p>}
           </div>
         )}
 
         {/* Transcript */}
         {transcript && (
-          <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border max-h-32 overflow-y-auto">
-            <p className="text-xs text-muted-foreground whitespace-pre-wrap">{transcript}</p>
+          <div className="mt-4 max-h-32 overflow-y-auto rounded-lg border border-white/10 bg-black/25 p-3" aria-label="Voice transcript">
+            <p className="whitespace-pre-wrap text-xs text-slate-400">{transcript}</p>
           </div>
         )}
       </CardContent>

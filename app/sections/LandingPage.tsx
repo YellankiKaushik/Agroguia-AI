@@ -110,10 +110,10 @@ const tabContent: Record<FeatureTab, { title: string; copy: string; bullets: str
     panel: (
       <div className="space-y-3 rounded-lg border border-white/10 bg-black/35 p-4 font-mono text-[11px] text-slate-300">
         <div className="text-emerald-300">pest_advisory {'{'}</div>
-        <div className="pl-4 text-slate-400">primary_disease: "Yellow Mosaic Virus"</div>
+        <div className="pl-4 text-slate-400">primary_disease: &quot;Yellow Mosaic Virus&quot;</div>
         <div className="pl-4 text-slate-400">action_window_hours: 48</div>
-        <div className="pl-4 text-slate-400">immediate_action: "Spray Mancozeb 600g/acre"</div>
-        <div className="pl-4 text-amber-200">risk_level: "High"</div>
+        <div className="pl-4 text-slate-400">immediate_action: &quot;Spray Mancozeb 600g/acre&quot;</div>
+        <div className="pl-4 text-amber-200">risk_level: &quot;High&quot;</div>
         <div className="text-emerald-300">{'}'}</div>
       </div>
     ),
@@ -147,7 +147,7 @@ const tabContent: Record<FeatureTab, { title: string; copy: string; bullets: str
         </div>
         <div className="mt-5 space-y-2 text-center">
           <div className="text-sm font-semibold text-white">Voice advisory ready</div>
-          <div className="text-xs leading-relaxed text-slate-400">"Spray before rainfall. Keep photos ready for insurance claim filing."</div>
+          <div className="text-xs leading-relaxed text-slate-400">&quot;Spray before rainfall. Keep photos ready for insurance claim filing.&quot;</div>
         </div>
       </div>
     ),

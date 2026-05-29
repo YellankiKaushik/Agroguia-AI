@@ -6,7 +6,7 @@ export async function POST() {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     maxAge: 0,
   });
   return response;

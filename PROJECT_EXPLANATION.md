@@ -63,7 +63,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
 **Key design principles evident in the implementation**
 - **Structured output contract** over free-form text: the advisory is a JSON packet with fixed keys.
 - **User-scoped persistence**: CRUD APIs always scope by authenticated `user_id`.
-- **Server-side key isolation**: OpenRouter + kk keys are accessed only in server code.
+- **Server-side key isolation**: OpenRouter and extension-service keys are accessed only in server code.
 - **Progressive UX**: onboarding wizard reduces cognitive load; dashboard aggregates modules.
 
 ---
@@ -100,7 +100,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
   - Single entry point for advisory generation
   - Normalizes response format for UI consumption (metadata + merged defaults)
 - `app/api/rag/route.ts` (optional feature surface)
-  - Server proxy to kk RAG v3:
+  - Server proxy to the external RAG v3 service:
     - list documents, upload+train, delete docs, crawl website content
 - `app/api/scheduler/route.ts` (optional feature surface)
   - Server proxy to external scheduler:
@@ -138,7 +138,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
 **Integrations**
 - **OpenRouter**: used for primary advisory generation (`OPENROUTER_API_KEY`, optional `OPENROUTER_MODEL`).
 - **MongoDB Atlas**: used for all persistence via `DATABASE_URL`.
-- **kk services** (optional):
+- **External extension services** (optional):
   - RAG document operations
   - Scheduler operations
   - Asset uploads
@@ -323,4 +323,3 @@ If scaled and grounded with real data, AGROGUIA.AI can become a rural intelligen
 
 ## 12. Final Closing (POWERFUL)
 AGROGUIA.AI is a step toward a future where **farmers operate with the same decision support systems that high-performing industries take for granted**—planning, risk management, and intelligence that compound over time. It is the beginning of a platform that can turn agriculture from reactive firefighting into confident, data-grounded operations.
-

@@ -10,7 +10,7 @@ const sendErrorToParent = (
   if (isInIframe()) {
     window.parent.postMessage(
       {
-        source: "architect-child-app",
+        source: "agroguia-ai-app",
         type: "CHILD_APP_ERROR",
         payload: {
           type: status && status >= 500 ? "api_error" : "network_error",
@@ -26,7 +26,13 @@ const sendErrorToParent = (
   }
 };
 
-const fetchWrapper = async (...args) => {
+const getRequestUrl = (input: Parameters<typeof fetch>[0]) => {
+  if (typeof input === "string") return input;
+  if (input instanceof URL) return input.toString();
+  return input.url;
+};
+
+const fetchWrapper = async (...args: Parameters<typeof fetch>) => {
   try {
     const response = await fetch(...args);
 
@@ -37,7 +43,7 @@ const fetchWrapper = async (...args) => {
     }
 
     // Tool authentication required on /api/agent - inspect body for tool_auth keyword
-    const requestUrl = typeof args[0] === "string" ? args[0] : args[0]?.url || "";
+    const requestUrl = getRequestUrl(args[0]);
     if (requestUrl.includes("/api/agent")) {
       const contentType = response.headers.get("content-type") || "";
       if (contentType.includes("application/json")) {
@@ -61,7 +67,7 @@ const fetchWrapper = async (...args) => {
 
             window.parent.postMessage(
               {
-                source: "architect-child-app",
+                source: "agroguia-ai-app",
                 type: "TOOL_AUTH_REQUIRED",
                 payload: {
                   tool_name: toolName,
@@ -92,7 +98,7 @@ const fetchWrapper = async (...args) => {
 
         return;
       } else {
-        const requestUrl = typeof args[0] === "string" ? args[0] : args[0]?.url || "";
+        const requestUrl = getRequestUrl(args[0]);
         sendErrorToParent(
           `Backend returned 404 Not Found for ${requestUrl}`,
           404,
@@ -101,7 +107,7 @@ const fetchWrapper = async (...args) => {
       }
     } // if backend is erroring out
     else if (response.status >= 500) {
-      const requestUrl = typeof args[0] === "string" ? args[0] : args[0]?.url || "";
+      const requestUrl = getRequestUrl(args[0]);
       sendErrorToParent(
         `Backend returned ${response.status} error for ${requestUrl}`,
         response.status,
@@ -112,7 +118,7 @@ const fetchWrapper = async (...args) => {
     return response;
   } catch (error) {
     // network failures
-    const requestUrl = typeof args[0] === "string" ? args[0] : args[0]?.url || "";
+    const requestUrl = getRequestUrl(args[0]);
     sendErrorToParent(
       `Network error: Cannot connect to backend (${requestUrl})`,
       undefined,

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { callAIAgent } from '@/lib/aiAgent'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,19 +9,31 @@ import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { FiMenu, FiHome, FiUser, FiClock, FiSettings, FiFileText, FiRefreshCw, FiX, FiEdit3, FiChevronDown } from 'react-icons/fi'
-import ProfileWizard from './sections/ProfileWizard'
+import { AlertTriangle, ChevronDown, Clock, Edit3, FileText, Home, Menu, RefreshCw, Settings, Sparkles, User, X } from 'lucide-react'
 import type { FarmerProfileData } from './sections/ProfileWizard'
-import DashboardTabs from './sections/DashboardTabs'
 import LandingPage from './sections/LandingPage'
-import DashboardHero from './sections/DashboardHero'
-import CropTimeline from './sections/CropTimeline'
-import FinancialDashboard from './sections/FinancialDashboard'
-import SchemesLoansInsurance from './sections/SchemesLoansInsurance'
-import VoiceUpdate from './sections/VoiceUpdate'
-import { AdvisoryHistoryView, ScheduleManagement, SettingsKB } from './sections/ManagementViews'
 import { LanguageProvider, useLanguage } from './sections/LanguageContext'
 import LanguageSelector from './sections/LanguageSelector'
+
+const ProfileWizard = dynamic(() => import('./sections/ProfileWizard'), { ssr: false })
+const DashboardTabs = dynamic(() => import('./sections/DashboardTabs'), { ssr: false })
+const DashboardHero = dynamic(() => import('./sections/DashboardHero'), { ssr: false })
+const CropTimeline = dynamic(() => import('./sections/CropTimeline'), { ssr: false })
+const FinancialDashboard = dynamic(() => import('./sections/FinancialDashboard'), { ssr: false })
+const SchemesLoansInsurance = dynamic(() => import('./sections/SchemesLoansInsurance'), { ssr: false })
+const VoiceUpdate = dynamic(() => import('./sections/VoiceUpdate'), { ssr: false })
+const AdvisoryHistoryView = dynamic(
+  () => import('./sections/ManagementViews').then((mod) => mod.AdvisoryHistoryView),
+  { ssr: false }
+)
+const ScheduleManagement = dynamic(
+  () => import('./sections/ManagementViews').then((mod) => mod.ScheduleManagement),
+  { ssr: false }
+)
+const SettingsKB = dynamic(
+  () => import('./sections/ManagementViews').then((mod) => mod.SettingsKB),
+  { ssr: false }
+)
 
 const MANAGER_AGENT_ID = '69ec55d4a57e78ed3c81ed7c'
 
@@ -56,11 +69,19 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-          <div className="text-center p-8 max-w-md">
-            <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
-            <p className="text-muted-foreground mb-4 text-sm">{this.state.error}</p>
-            <button onClick={() => this.setState({ hasError: false, error: '' })} className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm">Try again</button>
+        <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-slate-100">
+          <div className="max-w-md rounded-[2rem] border border-red-400/20 bg-white/[0.04] p-8 text-center shadow-2xl shadow-black/40 backdrop-blur-xl">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-red-400/25 bg-red-500/10 text-red-100">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <p className="text-xs uppercase text-red-200/80">System recovery</p>
+            <h2 className="mt-2 text-xl font-semibold text-white">The intelligence workspace paused unexpectedly.</h2>
+          <p className="mb-4 mt-2 text-sm leading-6 text-slate-400">Your farm data is safe. Retry the interface, and AGROGUIA.AI will restore the workspace state.</p>
+          <details className="mb-5 rounded-lg border border-white/10 bg-black/25 p-3 text-left text-xs text-slate-500">
+            <summary className="cursor-pointer text-slate-300">Technical detail</summary>
+            <p className="mt-2 break-words">{this.state.error}</p>
+          </details>
+          <button onClick={() => this.setState({ hasError: false, error: '' })} className="rounded-md bg-emerald-200 px-4 py-2 text-sm font-semibold text-slate-950 transition-all duration-300 hover:bg-emerald-100">Restore workspace</button>
           </div>
         </div>
       )
@@ -126,6 +147,9 @@ function AuthScreen({ onAuthSuccess, onBackToLanding }: { onAuthSuccess: (user: 
   const [submitting, setSubmitting] = useState(false)
   const [authError, setAuthError] = useState('')
   const { t } = useLanguage()
+  const isRegister = mode === 'register'
+  const authInputClass =
+    'h-11 w-full rounded-md border border-white/10 bg-black/25 px-3 text-sm text-white outline-none transition-all duration-200 placeholder:text-slate-500 focus:border-emerald-300/40 focus:bg-white/[0.035] focus:ring-2 focus:ring-emerald-300/20'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -157,48 +181,145 @@ function AuthScreen({ onAuthSuccess, onBackToLanding }: { onAuthSuccess: (user: 
 
       onAuthSuccess(data.user)
     } catch (err: any) {
-      setAuthError(err?.message || 'Network error')
+      setAuthError(err?.message || 'Unable to reach the authentication service. Please check your connection and try again.')
     }
 
     setSubmitting(false)
   }
 
   return (
-    <div style={THEME_VARS} className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md bg-card/80 backdrop-blur-lg border-border shadow-xl">
-        <CardHeader className="text-center space-y-3">
-          <CardTitle className="text-2xl font-bold text-primary">{t('app_title')}</CardTitle>
-          <p className="text-sm text-muted-foreground">{t('app_tagline')}</p>
-          <LanguageSelector size="sm" />
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-3">
-            {mode === 'register' && (
-              <>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" />
-                <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" />
-                <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username (optional)" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" />
-              </>
-            )}
-            {mode === 'login' && (
-              <input value={emailOrUsername} onChange={(e) => setEmailOrUsername(e.target.value)} placeholder="Email or username" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" />
-            )}
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" />
-            {authError && <p className="text-xs text-destructive">{authError}</p>}
-            <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? 'Please wait...' : mode === 'login' ? 'Login' : 'Register'}
-            </Button>
-            <button type="button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-full text-xs text-primary hover:underline">
-              {mode === 'login' ? 'Create an account' : 'Already have an account? Login'}
-            </button>
-            {onBackToLanding && (
-              <button type="button" onClick={onBackToLanding} className="w-full text-xs text-muted-foreground hover:text-foreground hover:underline mt-2">
-                Back to Home
-              </button>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+    <div className="dark relative min-h-screen overflow-hidden bg-[#07100d] px-4 py-8 text-slate-100 selection:bg-emerald-300 selection:text-slate-950 sm:px-6">
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_-20%,rgba(45,212,191,0.20),transparent_42%),linear-gradient(180deg,rgba(7,16,13,0)_0%,#07100d_92%)]" />
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col">
+        <header className="flex items-center justify-between gap-4 py-2">
+          <button type="button" onClick={onBackToLanding} className="group flex items-center gap-3 text-left" aria-label="Back to AGROGUIA.AI home">
+            <span className="flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/25 bg-emerald-300/10 text-sm font-bold text-emerald-100 shadow-lg shadow-emerald-950/30 transition-all duration-300 group-hover:border-emerald-200/40 group-hover:bg-emerald-300/15">
+              AG
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-white">AGROGUIA.AI</span>
+              <span className="hidden text-[11px] uppercase text-slate-500 sm:block">Farm intelligence layer</span>
+            </span>
+          </button>
+          <div className="rounded-md border border-white/10 bg-white/[0.035] p-1 backdrop-blur-xl">
+            <LanguageSelector size="sm" />
+          </div>
+        </header>
+
+        <main className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-14">
+          <section className="order-2 lg:order-1">
+            <div className="max-w-2xl">
+              <div className="mb-5 inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-100">
+                Secure access to your farm intelligence system
+              </div>
+              <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
+                {isRegister ? 'Create your AI farm command account.' : 'Continue into your AI farm command center.'}
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-8 text-slate-400 sm:text-lg">
+                {isRegister
+                  ? 'Build a secure farmer identity before generating personalized advisory, weather, risk, finance, scheme, and voice intelligence.'
+                  : 'Sign in to access your profile, advisory history, dashboard intelligence, and operational farm decision packets.'}
+              </p>
+            </div>
+
+            <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
+              {[
+                ['Structured AI', 'JSON advisory modules'],
+                ['User scoped', 'Protected profile history'],
+                ['Voice ready', 'Field-first summaries'],
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-md border border-white/10 bg-white/[0.025] px-4 py-3">
+                  <span className="text-xs font-semibold text-slate-200">{title}</span>
+                  <span className="mt-1 block text-[11px] leading-5 text-slate-500">{copy}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <Card className="order-1 w-full overflow-hidden rounded-lg border border-white/10 bg-slate-950/90 text-slate-100 shadow-2xl shadow-black/40 backdrop-blur-xl lg:order-2">
+            <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
+              </div>
+              <div className="hidden rounded-md border border-white/10 bg-black/30 px-3 py-1 font-mono text-[11px] text-slate-500 sm:block">
+                agroguia.ai/auth
+              </div>
+              <div className="h-2 w-16 rounded-full bg-white/10" />
+            </div>
+            <CardHeader className="space-y-4 p-6 pb-4 text-left sm:p-8 sm:pb-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase text-emerald-200/70">{isRegister ? 'Create profile access' : 'Authenticated intelligence'}</p>
+                  <CardTitle className="mt-2 text-2xl font-semibold leading-tight text-white sm:text-3xl">
+                    {isRegister ? 'Start your AGROGUIA account' : 'Welcome back to AGROGUIA.AI'}
+                  </CardTitle>
+                </div>
+                <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[11px] font-medium text-emerald-100">
+                  Secure
+                </span>
+              </div>
+              <p className="text-sm leading-6 text-slate-400">
+                {isRegister ? t('app_tagline') : 'Open your dashboard and continue generating structured farm intelligence.'}
+              </p>
+            </CardHeader>
+            <CardContent className="p-6 pt-0 sm:p-8 sm:pt-0">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {isRegister && (
+                  <>
+                    <label className="block space-y-2">
+                      <span className="text-xs font-medium text-slate-300">Full name</span>
+                      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Raju Patil" className={authInputClass} />
+                    </label>
+                    <label className="block space-y-2">
+                      <span className="text-xs font-medium text-slate-300">Email address</span>
+                      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="farmer@example.com" className={authInputClass} />
+                    </label>
+                    <label className="block space-y-2">
+                      <span className="text-xs font-medium text-slate-300">Username <span className="text-slate-500">(optional)</span></span>
+                      <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="raju_soybean" className={authInputClass} />
+                    </label>
+                  </>
+                )}
+                {!isRegister && (
+                  <label className="block space-y-2">
+                    <span className="text-xs font-medium text-slate-300">Email or username</span>
+                    <input value={emailOrUsername} onChange={(e) => setEmailOrUsername(e.target.value)} placeholder="farmer@example.com" className={authInputClass} />
+                  </label>
+                )}
+                <label className="block space-y-2">
+                  <span className="text-xs font-medium text-slate-300">Password</span>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" className={authInputClass} />
+                </label>
+                {authError && (
+                  <div role="alert" className="rounded-lg border border-red-400/20 bg-red-950/20 px-3 py-3 text-xs leading-5 text-red-100">
+                    <p className="font-semibold">Access check failed</p>
+                    <p className="mt-1 text-red-200/80">{authError}</p>
+                  </div>
+                )}
+                <Button type="submit" className="h-12 w-full rounded-md bg-emerald-200 font-semibold text-slate-950 transition-all duration-300 hover:bg-emerald-100" disabled={submitting}>
+                  {submitting && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
+                  {submitting ? 'Securing workspace...' : isRegister ? 'Create intelligence account' : 'Enter dashboard'}
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setMode(isRegister ? 'login' : 'register')}
+                  className="w-full rounded-md border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-medium text-slate-300 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
+                >
+                  {isRegister ? 'Already have an account? Sign in' : 'New to AGROGUIA.AI? Create an account'}
+                </button>
+                {onBackToLanding && (
+                  <button type="button" onClick={onBackToLanding} className="w-full text-xs text-slate-500 transition-colors hover:text-white">
+                    Back to landing page
+                  </button>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
     </div>
   )
 }
@@ -206,11 +327,11 @@ function AuthScreen({ onAuthSuccess, onBackToLanding }: { onAuthSuccess: (user: 
 type ViewType = 'dashboard' | 'profile' | 'history' | 'schedules' | 'settings'
 
 const NAV_ITEMS: { id: ViewType; labelKey: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard', labelKey: 'nav_dashboard', icon: <FiHome /> },
-  { id: 'profile', labelKey: 'nav_profile', icon: <FiUser /> },
-  { id: 'history', labelKey: 'nav_history', icon: <FiFileText /> },
-  { id: 'schedules', labelKey: 'nav_schedules', icon: <FiClock /> },
-  { id: 'settings', labelKey: 'nav_settings', icon: <FiSettings /> },
+  { id: 'dashboard', labelKey: 'nav_dashboard', icon: <Home className="h-4 w-4" /> },
+  { id: 'profile', labelKey: 'nav_profile', icon: <User className="h-4 w-4" /> },
+  { id: 'history', labelKey: 'nav_history', icon: <FileText className="h-4 w-4" /> },
+  { id: 'schedules', labelKey: 'nav_schedules', icon: <Clock className="h-4 w-4" /> },
+  { id: 'settings', labelKey: 'nav_settings', icon: <Settings className="h-4 w-4" /> },
 ]
 
 function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: () => Promise<void> }) {
@@ -271,10 +392,10 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
         setEditingProfile(false)
         setView('dashboard')
       } else {
-        setSaveError(data.error || 'Failed to save profile. Please try again.')
+        setSaveError(data.error || 'We could not save the farm profile yet. Please try again.')
       }
     } catch (e: any) {
-      setSaveError(e?.message || 'Network error. Please try again.')
+      setSaveError(e?.message || 'Unable to reach the profile service. Please check your connection and try again.')
     }
     setSavingProfile(false)
   }
@@ -312,10 +433,10 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
           })
         } catch { /* ignore history save errors */ }
       } else {
-        setGenError(result?.error ?? 'Failed to generate advisory')
+      setGenError(result?.error ?? 'The AI advisory engine could not complete this request.')
       }
     } catch (e: any) {
-      setGenError(e?.message ?? 'Network error')
+      setGenError(e?.message ?? 'Unable to reach the advisory engine. Please check your connection and try again.')
     }
     setGenerating(false)
   }
@@ -338,10 +459,19 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <FiRefreshCw className="h-8 w-8 text-primary animate-spin mx-auto" />
-          <p className="text-muted-foreground text-sm">{t('loading_profile')}</p>
+      <div className="dark relative flex min-h-screen items-center justify-center overflow-hidden bg-[#07100d] text-slate-100">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_-20%,rgba(45,212,191,0.18),transparent_42%),linear-gradient(180deg,rgba(7,16,13,0)_0%,#07100d_92%)]" />
+        <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-slate-950/90 p-8 text-center shadow-2xl shadow-black/40 backdrop-blur-xl">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/25 bg-emerald-300/10 shadow-lg shadow-emerald-950/30">
+            <RefreshCw className="h-6 w-6 animate-spin text-emerald-200" />
+          </div>
+          <p className="mt-5 text-xs uppercase text-emerald-200/70">Profile calibration</p>
+          <h2 className="mt-2 text-xl font-semibold text-white">Preparing your farm intelligence layer</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">{t('loading_profile')}</p>
+          <div className="mt-6 space-y-2">
+            {[1, 2, 3].map(i => <div key={i} className="h-2 animate-pulse rounded-full bg-white/[0.06]" />)}
+          </div>
         </div>
       </div>
     )
@@ -352,84 +482,176 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
   }
 
   return (
-    <div className="flex min-h-screen">
-      {sidebarOpen && <div className="fixed inset-0 bg-black/30 z-30 md:hidden" onClick={() => setSidebarOpen(false)} />}
-      <aside className={`fixed md:sticky top-0 left-0 h-screen w-56 bg-card/90 backdrop-blur-lg border-r border-border z-40 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 flex flex-col`}>
-        <div className="p-4 flex items-center justify-between border-b border-border">
-          <h1 className="text-lg font-bold text-primary">{t('app_title')}</h1>
-          <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setSidebarOpen(false)}><FiX /></Button>
+    <div className="relative flex min-h-screen overflow-hidden bg-[#07100d] text-slate-100 selection:bg-emerald-300 selection:text-slate-950">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_35%_-10%,rgba(45,212,191,0.16),transparent_38%),linear-gradient(180deg,rgba(7,16,13,0)_0%,#07100d_92%)]" />
+      {sidebarOpen && <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setSidebarOpen(false)} />}
+      <aside className={`fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r border-white/10 bg-slate-950/90 shadow-2xl shadow-black/40 backdrop-blur-xl transition-transform duration-300 md:sticky ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <div className="border-b border-white/10 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-md border border-emerald-300/25 bg-emerald-300/10 text-sm font-bold text-emerald-100 shadow-lg shadow-emerald-950/30">
+                AG
+              </span>
+              <div>
+                <h1 className="text-sm font-semibold text-white">{t('app_title')}</h1>
+                <p className="hidden text-[11px] uppercase text-slate-500 sm:block">Farm intelligence OS</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="rounded-md text-slate-400 hover:bg-white/[0.06] hover:text-white md:hidden" onClick={() => setSidebarOpen(false)}><X className="h-4 w-4" /></Button>
+          </div>
+          <div className="mt-4 rounded-lg border border-emerald-300/15 bg-emerald-300/[0.055] p-3">
+            <p className="text-xs font-semibold text-emerald-100">Intelligence engine</p>
+            <p className="mt-1 text-[11px] leading-5 text-slate-500">Profile, advisory, finance, risk, and planning modules connected.</p>
+          </div>
         </div>
-        <nav className="flex-1 p-2 space-y-1">
+        <nav className="flex-1 space-y-2 p-3" aria-label="Dashboard sections">
           {NAV_ITEMS.map(item => (
-            <button key={item.id} onClick={() => { setView(item.id); setSidebarOpen(false); if (item.id === 'history') loadHistory() }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${view === item.id ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'}`}>
-              {item.icon} {t(item.labelKey)}
+            <button key={item.id} type="button" onClick={() => { setView(item.id); setSidebarOpen(false); if (item.id === 'history') loadHistory() }} aria-current={view === item.id ? 'page' : undefined} className={`group flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-all duration-300 ${view === item.id ? 'border-emerald-300/30 bg-emerald-300/10 text-white' : 'border-transparent text-slate-400 hover:border-white/10 hover:bg-white/[0.05] hover:text-white'}`}>
+              <span className={`flex h-8 w-8 items-center justify-center rounded-md border transition-all duration-300 ${view === item.id ? 'border-emerald-300/25 bg-emerald-300/10 text-emerald-100' : 'border-white/10 bg-black/25 text-slate-500 group-hover:text-emerald-100'}`}>
+                {item.icon}
+              </span>
+              <span>{t(item.labelKey)}</span>
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-border">
+        <div className="border-t border-white/10 p-3">
           <div className="flex flex-wrap gap-1.5">
             {['Weather', 'Pest', 'Protection', 'Market', 'Schemes', 'Insurance', 'Loan', 'Fraud', 'Waste', 'Voice'].map(name => (
-              <Badge key={name} variant="outline" className="text-xs py-0">{name}</Badge>
+              <Badge key={name} variant="outline" className="border-white/10 bg-white/[0.025] py-0 text-[10px] font-medium text-slate-400 hover:bg-white/[0.04]">{name}</Badge>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Powered by AGROGUIA.AI Intelligence Engine</p>
+          <p className="mt-3 text-xs leading-5 text-slate-500">Powered by AGROGUIA.AI Intelligence Engine</p>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-lg border-b border-border px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setSidebarOpen(true)}><FiMenu /></Button>
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07100d]/85 px-4 py-3 backdrop-blur-xl sm:px-6">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button variant="ghost" size="sm" className="rounded-md text-slate-400 hover:bg-white/[0.06] hover:text-white md:hidden" onClick={() => setSidebarOpen(true)}><Menu className="h-4 w-4" /></Button>
+            <div className="hidden h-9 w-px bg-white/10 md:block" />
             <div>
-              <h2 className="text-sm font-semibold text-foreground">{farmerInfo.name}</h2>
-              <p className="text-xs text-muted-foreground">{farmerInfo.district}, {farmerInfo.state ?? ''}</p>
+              <p className="text-[11px] uppercase text-emerald-200/70">Farm command profile</p>
+              <h2 className="truncate text-sm font-semibold text-white">{farmerInfo.name}</h2>
+              <p className="truncate text-xs text-slate-500">{farmerInfo.district}, {farmerInfo.state ?? ''}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <LanguageSelector size="sm" />
-            <div className="flex items-center gap-2">
-              <Label className="text-xs text-muted-foreground">{t('sample_data')}</Label>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden rounded-md border border-white/10 bg-white/[0.035] p-1 lg:block">
+              <LanguageSelector size="sm" />
+            </div>
+            <div className="hidden items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 sm:flex">
+              <Label className="text-xs text-slate-400">{t('sample_data')}</Label>
               <Switch checked={showSample} onCheckedChange={(v) => { setShowSample(v); if (v) setShowDetailedTabs(true) }} />
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground hidden sm:inline">{currentUser.name || currentUser.email}</span>
-              <Button variant="outline" size="sm" onClick={onLogout}>Logout</Button>
+            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-2 py-1.5">
+              <span className="hidden max-w-32 truncate text-xs text-slate-400 sm:inline">{currentUser.name || currentUser.email}</span>
+              <Button variant="outline" size="sm" onClick={onLogout} className="h-8 rounded-md border-white/15 bg-white/[0.03] text-xs text-slate-200 hover:bg-white/10 hover:text-white">Logout</Button>
             </div>
+          </div>
           </div>
         </header>
 
         <ScrollArea className="flex-1">
-          <div className="p-4 md:p-6 max-w-5xl mx-auto w-full space-y-4">
+          <div className="mx-auto w-full max-w-7xl space-y-5 p-4 sm:p-6 lg:p-8">
             {view === 'dashboard' && (
               <>
+                <section className="rounded-lg border border-white/10 bg-slate-950/80 p-5 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                      <p className="text-xs uppercase text-emerald-200/70">Dashboard intelligence layer</p>
+                      <h1 className="mt-2 text-2xl font-semibold leading-tight text-white sm:text-3xl">Farm decision command center</h1>
+                      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+                        Review profile-aware recommendations, generate advisory packets, and operate crop, finance, risk, and planning modules from one console.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      {[
+                        ['Profile', profile ? 'Ready' : 'Missing'],
+                        ['Advisory', activeAdvisory ? 'Loaded' : 'Pending'],
+                        ['History', `${history.length}`],
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2">
+                          <p className="text-[11px] text-slate-500">{label}</p>
+                          <p className="mt-1 font-semibold text-slate-200">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
                 <DashboardHero farmer={farmerInfo} weather={MOCK_WEATHER} alerts={MOCK_ALERTS} actions={MOCK_ACTIONS} />
                 <CropTimeline stages={MOCK_TIMELINE.stages} cropName={farmerInfo.current_crop} />
                 <FinancialDashboard {...MOCK_FINANCIAL} />
                 <SchemesLoansInsurance schemes={MOCK_SCHEMES} insurance={MOCK_INSURANCE} loan={MOCK_LOAN} />
                 <VoiceUpdate voiceSummary={MOCK_VOICE} />
 
-                <div className="flex gap-2 items-center flex-wrap">
-                  <Button onClick={handleGenerate} disabled={generating} className="gap-2">
-                    <FiRefreshCw className={`h-4 w-4 ${generating ? 'animate-spin' : ''}`} />
+                <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-white/[0.025] p-3">
+                  <Button onClick={handleGenerate} disabled={generating} className="h-11 gap-2 rounded-md bg-emerald-200 font-semibold text-slate-950 transition-all duration-300 hover:bg-emerald-100">
+                    <RefreshCw className={`h-4 w-4 ${generating ? 'animate-spin' : ''}`} />
                     {generating ? t('dash_generating') : t('dash_generate')}
                   </Button>
                   {activeAdvisory && !showDetailedTabs && (
-                    <Button variant="outline" onClick={() => setShowDetailedTabs(true)} className="gap-1">
-                      <FiChevronDown className="h-4 w-4" /> Show Detailed Advisory
+                    <Button variant="outline" onClick={() => setShowDetailedTabs(true)} className="h-11 gap-1 rounded-md border-white/15 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white">
+                      <ChevronDown className="h-4 w-4" /> Show Detailed Advisory
                     </Button>
                   )}
                 </div>
-                {genError && <p className="text-sm text-destructive bg-destructive/10 p-2 rounded-lg">{genError}</p>}
+                {generating && (
+                  <Card className="overflow-hidden rounded-lg border border-emerald-300/15 bg-emerald-300/[0.045] text-slate-100 shadow-2xl shadow-emerald-950/20 backdrop-blur-xl">
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-emerald-300/25 bg-emerald-300/10 text-emerald-100">
+                          <Sparkles className="h-5 w-5 animate-pulse" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs uppercase text-emerald-200/70">AI advisory generation</p>
+                          <h3 className="mt-1 font-semibold text-white">Synthesizing crop, weather, pest, finance, and scheme signals.</h3>
+                          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                            {['Profile context', 'Risk windows', 'Dashboard-safe output'].map(label => (
+                              <div key={label} className="h-2 animate-pulse rounded-full bg-white/[0.08]" title={label} />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {genError && (
+                  <Card className="rounded-lg border border-red-400/20 bg-red-950/20 text-red-100 backdrop-blur-xl">
+                    <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-red-400/25 bg-red-500/10">
+                          <AlertTriangle className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase text-red-200/80">Advisory engine unavailable</p>
+                          <p className="mt-1 text-sm leading-6 text-red-100">{genError}</p>
+                          <p className="mt-1 text-xs text-red-200/70">Check connectivity and retry generation. Existing dashboard data remains available.</p>
+                        </div>
+                      </div>
+                      <Button onClick={handleGenerate} disabled={generating} className="h-10 rounded-md bg-red-100 text-sm font-semibold text-red-950 hover:bg-white">Retry advisory</Button>
+                    </CardContent>
+                  </Card>
+                )}
 
                 {showDetailedTabs && activeAdvisory && (
                   <DashboardTabs advisory={activeAdvisory} voiceSummaries={activeVoice} />
                 )}
 
                 {!activeAdvisory && !showSample && (
-                  <Card className="bg-card/80 backdrop-blur-lg border-border">
-                    <CardContent className="py-8 text-center">
-                      <p className="text-muted-foreground text-sm">{t('dash_empty')}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{t('dash_empty_hint')}</p>
+                  <Card className="rounded-[1.5rem] border border-dashed border-emerald-300/20 bg-white/[0.035] text-slate-100 shadow-2xl shadow-black/20 backdrop-blur-xl">
+                    <CardContent className="p-8 text-center sm:p-10">
+                      <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/25 bg-emerald-300/10 text-emerald-100">
+                        <Sparkles className="h-6 w-6" />
+                      </div>
+                      <p className="text-xs uppercase text-emerald-200/70">No advisory generated yet</p>
+                      <h3 className="mt-2 text-xl font-semibold text-white">{t('dash_empty')}</h3>
+                      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-400">{t('dash_empty_hint')}</p>
+                      <Button onClick={handleGenerate} disabled={generating} className="mt-6 h-11 rounded-md bg-emerald-200 font-semibold text-slate-950 hover:bg-emerald-100">
+                        Generate first intelligence packet
+                      </Button>
                     </CardContent>
                   </Card>
                 )}
@@ -439,12 +661,15 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
             {view === 'profile' && profile && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">{t('profile_title')}</h2>
-                  <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)} className="gap-1">
-                    <FiEdit3 className="h-3.5 w-3.5" /> Edit Profile
+                  <div>
+                    <p className="text-xs uppercase text-emerald-200/70">Farm intelligence profile</p>
+                    <h2 className="mt-1 text-lg font-semibold text-white">{t('profile_title')}</h2>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)} className="gap-1 rounded-md border-white/15 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white">
+                    <Edit3 className="h-3.5 w-3.5" /> Edit Profile
                   </Button>
                 </div>
-                <Card className="bg-card/80 backdrop-blur-lg border-border">
+                <Card className="rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl">
                   <CardContent className="py-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       {[
@@ -463,9 +688,9 @@ function AppShell({ currentUser, onLogout }: { currentUser: AuthUser; onLogout: 
                         [t('profile_budget'), `Rs. ${profile?.budget_inputs ?? 0}`],
                         [t('profile_pref_lang'), profile?.preferred_language],
                       ].map(([label, val], i) => (
-                        <div key={i} className="flex justify-between border-b border-border/50 pb-1">
-                          <span className="text-muted-foreground">{String(label)}</span>
-                          <span className="font-medium">{String(val ?? '--')}</span>
+                        <div key={i} className="flex justify-between border-b border-white/10 pb-1">
+                          <span className="text-slate-500">{String(label)}</span>
+                          <span className="font-medium text-slate-200">{String(val ?? '--')}</span>
                         </div>
                       ))}
                     </div>
@@ -522,11 +747,17 @@ export default function Page() {
 
   return (
     <ErrorBoundary>
-      <div style={THEME_VARS} className="min-h-screen bg-background text-foreground font-sans">
+      <div style={THEME_VARS} className="min-h-screen bg-[#07100d] text-slate-100 font-sans">
         <LanguageProvider>
           {authLoading ? (
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="text-sm text-muted-foreground">Loading...</div>
+            <div className="flex min-h-screen items-center justify-center bg-slate-950">
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] px-6 py-5 text-center shadow-2xl shadow-black/30 backdrop-blur-xl">
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-300/25 bg-emerald-300/10">
+                  <RefreshCw className="h-4 w-4 animate-spin text-emerald-200" />
+                </div>
+                <p className="text-xs uppercase text-emerald-200/70">AGROGUIA.AI</p>
+                <p className="mt-1 text-sm text-slate-400">Loading your intelligent agriculture workspace...</p>
+              </div>
             </div>
           ) : authUser ? (
             <AppShell currentUser={authUser} onLogout={handleLogout} />

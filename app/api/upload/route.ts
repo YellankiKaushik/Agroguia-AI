@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const LYZR_UPLOAD_URL = `${process.env.LYZR_AGENT_BASE_URL || 'https://agent-prod.studio.lyzr.ai'}/v3/assets/upload`
-const LYZR_API_KEY = process.env.LYZR_API_KEY || ''
+const EXTENSION_UPLOAD_URL = `${process.env.LYZR_AGENT_BASE_URL || 'https://agent-prod.studio.lyzr.ai'}/v3/assets/upload`
+const EXTENSION_API_KEY = process.env.LYZR_API_KEY || ''
 
 export async function POST(request: NextRequest) {
   try {
-    if (!LYZR_API_KEY) {
+    if (!EXTENSION_API_KEY) {
       return NextResponse.json(
         {
           success: false,
@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
           total_files: 0,
           successful_uploads: 0,
           failed_uploads: 0,
-          message: 'LYZR_API_KEY not configured',
+          message: 'Extension API key not configured',
           timestamp: new Date().toISOString(),
-          error: 'LYZR_API_KEY not configured on server',
+          error: 'Extension API key not configured on server',
         },
         { status: 500 }
       )
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Forward the request to LYZR API
+    // Forward the request to the external upload API
     const uploadFormData = new FormData()
     for (const file of files) {
       if (file instanceof File) {
@@ -50,10 +50,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const response = await fetch(LYZR_UPLOAD_URL, {
+    const response = await fetch(EXTENSION_UPLOAD_URL, {
       method: 'POST',
       headers: {
-        'x-api-key': LYZR_API_KEY,
+        'x-api-key': EXTENSION_API_KEY,
       },
       body: uploadFormData,
     })

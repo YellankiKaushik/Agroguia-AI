@@ -61,7 +61,7 @@ export const sendErrorToParent = (error: ErrorDetails): void => {
     window.parent.postMessage(
       {
         type: 'CHILD_APP_ERROR',
-        source: 'architect-child-app',
+        source: 'agroguia-ai-app',
         payload: error,
       },
       '*' // In production, use specific origin
@@ -86,7 +86,7 @@ export const requestFixFromParent = (error: ErrorDetails): void => {
     window.parent.postMessage(
       {
         type: 'FIX_ERROR_REQUEST',
-        source: 'architect-child-app',
+        source: 'agroguia-ai-app',
         payload: {
           ...error,
           action: 'fix',
@@ -139,19 +139,24 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onFix }) => {
   const inIframe = isInIframe()
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-xl">
+      <div className="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-red-400/20 bg-slate-950/95 text-slate-100 shadow-2xl shadow-black/50">
         {/* Header */}
-        <div className="bg-red-500 text-white px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-red-400/20 bg-red-500/10 px-6 py-4 text-red-100">
           <div className="flex items-center gap-3">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-400/25 bg-red-500/10">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <h2 className="text-lg font-semibold">Application Error</h2>
+            </span>
+            <div>
+              <p className="text-xs uppercase text-red-200/80">AGROGUIA system recovery</p>
+              <h2 className="text-lg font-semibold text-white">The workspace hit a temporary issue</h2>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-white/80 hover:text-white transition-colors"
+            className="rounded-md p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -160,22 +165,22 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onFix }) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-4">
             {/* Error Type Badge */}
             <div className="flex items-center gap-2">
-              <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 rounded">
+              <span className="rounded-full border border-red-400/20 bg-red-500/10 px-2 py-1 text-xs font-medium text-red-100">
                 {error.type.replace('_', ' ').toUpperCase()}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-slate-500">
                 {error.timestamp}
               </span>
             </div>
 
             {/* Error Message */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Error Message</h3>
-              <p className="text-sm text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800 p-3 rounded font-mono">
+              <h3 className="mb-1 text-sm font-medium text-slate-300">What happened</h3>
+              <p className="rounded-lg border border-white/10 bg-black/25 p-3 font-mono text-sm text-slate-200">
                 {error.message}
               </p>
             </div>
@@ -183,8 +188,8 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onFix }) => {
             {/* Raw Response (if available) */}
             {error.raw_response && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Raw Response</h3>
-                <pre className="text-xs text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto max-h-40">
+                <h3 className="mb-1 text-sm font-medium text-slate-300">Raw response</h3>
+                <pre className="max-h-40 overflow-x-auto rounded-lg border border-white/10 bg-black/25 p-3 text-xs text-slate-300">
                   {error.raw_response.substring(0, 1000)}
                   {error.raw_response.length > 1000 && '...'}
                 </pre>
@@ -194,10 +199,10 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onFix }) => {
             {/* Stack Trace (if available) */}
             {error.stack && (
               <details className="group">
-                <summary className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100">
-                  Stack Trace
+                <summary className="cursor-pointer text-sm font-medium text-slate-400 hover:text-white">
+                  Technical detail
                 </summary>
-                <pre className="mt-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto max-h-40">
+                <pre className="mt-2 max-h-40 overflow-x-auto rounded-lg border border-white/10 bg-black/25 p-3 text-xs text-slate-500">
                   {error.stack}
                 </pre>
               </details>
@@ -206,26 +211,26 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onFix }) => {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between bg-gray-50 dark:bg-gray-800/50">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {inIframe ? 'Running in iframe - can request fix from parent' : 'Not in iframe'}
+        <div className="flex items-center justify-between border-t border-white/10 bg-white/[0.025] px-6 py-4">
+          <p className="text-xs text-slate-500">
+            Your profile and advisory data remain protected.
           </p>
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+              className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:bg-white/10 hover:text-white"
             >
-              Dismiss
+              Return to workspace
             </button>
             {inIframe && (
               <button
                 onClick={onFix}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="flex items-center gap-2 rounded-md bg-emerald-200 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-100"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Fix with AI
+                Request AI fix
               </button>
             )}
           </div>
@@ -295,7 +300,7 @@ class ErrorBoundaryClass extends Component<ErrorBoundaryProps, ErrorBoundaryStat
       }
 
       return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+        <div className="min-h-screen bg-slate-950">
           <ErrorModal
             error={this.state.error}
             onClose={this.handleClose}

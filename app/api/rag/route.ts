@@ -1,8 +1,7 @@
 /**
  * Server-side RAG Knowledge Base API Route
  *
- * This route proxies requests to the LYZR RAG API v3 (https://rag-prod.studio.lyzr.ai)
- * Full API spec: https://rag-prod.studio.lyzr.ai/docs
+ * This route proxies requests to the configured external RAG API v3.
  *
  * CRITICAL API SPECIFICATIONS:
  *
@@ -23,13 +22,13 @@
  *    - Body: JSON array of filenames
  *    - Headers: x-api-key, Content-Type: application/json
  *
- * NEVER expose LYZR_API_KEY to client — always proxy through this route.
+ * NEVER expose extension-service API keys to the client — always proxy through this route.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 
-const LYZR_RAG_BASE_URL = `${process.env.LYZR_RAG_BASE_URL || "https://rag-prod.studio.lyzr.ai"}/v3`;
-const LYZR_API_KEY = process.env.LYZR_API_KEY || "";
+const RAG_BASE_URL = `${process.env.LYZR_RAG_BASE_URL || "https://rag-prod.studio.lyzr.ai"}/v3`;
+const EXTENSION_API_KEY = process.env.LYZR_API_KEY || "";
 
 const FILE_TYPE_MAP: Record<string, "pdf" | "docx" | "txt"> = {
   "application/pdf": "pdf",
@@ -41,11 +40,11 @@ const FILE_TYPE_MAP: Record<string, "pdf" | "docx" | "txt"> = {
 // POST - List documents (JSON body) or Upload and train (formData)
 export async function POST(request: NextRequest) {
   try {
-    if (!LYZR_API_KEY) {
+    if (!EXTENSION_API_KEY) {
       return NextResponse.json(
         {
           success: false,
-          error: "LYZR_API_KEY not configured on server",
+          error: "Extension API key not configured on server",
         },
         { status: 500 }
       );
@@ -69,12 +68,12 @@ export async function POST(request: NextRequest) {
       }
 
       const response = await fetch(
-        `${LYZR_RAG_BASE_URL}/rag/documents/${encodeURIComponent(ragId)}/`,
+        `${RAG_BASE_URL}/rag/documents/${encodeURIComponent(ragId)}/`,
         {
           method: "GET",
           headers: {
             accept: "application/json",
-            "x-api-key": LYZR_API_KEY,
+            "x-api-key": EXTENSION_API_KEY,
           },
         }
       );
@@ -158,13 +157,13 @@ export async function POST(request: NextRequest) {
       trainFormData.append("extra_info", "{}");
 
       const trainResponse = await fetch(
-        `${LYZR_RAG_BASE_URL}/train/${fileType}/?rag_id=${encodeURIComponent(
+        `${RAG_BASE_URL}/train/${fileType}/?rag_id=${encodeURIComponent(
           ragId
         )}`,
         {
           method: "POST",
           headers: {
-            "x-api-key": LYZR_API_KEY,
+            "x-api-key": EXTENSION_API_KEY,
             accept: "application/json",
           },
           body: trainFormData,
@@ -209,11 +208,11 @@ export async function POST(request: NextRequest) {
 // PATCH - Crawl a website and add content to knowledge base
 export async function PATCH(request: NextRequest) {
   try {
-    if (!LYZR_API_KEY) {
+    if (!EXTENSION_API_KEY) {
       return NextResponse.json(
         {
           success: false,
-          error: "LYZR_API_KEY not configured on server",
+          error: "Extension API key not configured on server",
         },
         { status: 500 }
       );
@@ -236,7 +235,7 @@ export async function PATCH(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": LYZR_API_KEY,
+        "x-api-key": EXTENSION_API_KEY,
       },
       body: JSON.stringify({ url, rag_id: ragId }),
     });
@@ -275,11 +274,11 @@ export async function PATCH(request: NextRequest) {
 // DELETE - Remove documents from knowledge base
 export async function DELETE(request: NextRequest) {
   try {
-    if (!LYZR_API_KEY) {
+    if (!EXTENSION_API_KEY) {
       return NextResponse.json(
         {
           success: false,
-          error: "LYZR_API_KEY not configured on server",
+          error: "Extension API key not configured on server",
         },
         { status: 500 }
       );
@@ -299,13 +298,13 @@ export async function DELETE(request: NextRequest) {
     }
 
     const response = await fetch(
-      `${LYZR_RAG_BASE_URL}/rag/${encodeURIComponent(ragId)}/docs/`,
+      `${RAG_BASE_URL}/rag/${encodeURIComponent(ragId)}/docs/`,
       {
         method: "DELETE",
         headers: {
           accept: "application/json",
           "Content-Type": "application/json",
-          "x-api-key": LYZR_API_KEY,
+          "x-api-key": EXTENSION_API_KEY,
         },
         body: JSON.stringify(documentNames),
       }

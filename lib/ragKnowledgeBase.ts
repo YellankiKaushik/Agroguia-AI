@@ -82,6 +82,9 @@ export async function getDocuments(ragId: string): Promise<GetDocumentsResponse>
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ragId }),
     })
+    if (!response) {
+      return { success: false, error: 'Request did not return a response' }
+    }
 
     const data = await response.json()
     return data
@@ -114,6 +117,9 @@ export async function uploadAndTrainDocument(ragId: string, file: File): Promise
       method: 'POST',
       body: formData,
     })
+    if (!response) {
+      return { success: false, error: 'Request did not return a response' }
+    }
 
     const data = await response.json()
     return data
@@ -140,6 +146,9 @@ export async function deleteDocuments(
       },
       body: JSON.stringify({ ragId, documentNames }),
     })
+    if (!response) {
+      return { success: false, error: 'Request did not return a response' }
+    }
 
     const data = await response.json()
     return data
@@ -163,6 +172,9 @@ export async function crawlWebsite(ragId: string, url: string): Promise<CrawlRes
       },
       body: JSON.stringify({ ragId, url }),
     })
+    if (!response) {
+      return { success: false, error: 'Request did not return a response' }
+    }
 
     const data = await response.json()
     return data

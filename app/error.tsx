@@ -30,7 +30,7 @@ export default function Error({
         }
 
         window.parent.postMessage(
-          { type: 'CHILD_APP_ERROR', source: 'architect-child-app', payload },
+          { type: 'CHILD_APP_ERROR', source: 'agroguia-ai-app', payload },
           '*'
         )
 
@@ -39,7 +39,7 @@ export default function Error({
           window.parent.postMessage(
             {
               type: 'FIX_ERROR_REQUEST',
-              source: 'architect-child-app',
+              source: 'agroguia-ai-app',
               payload: {
                 ...payload,
                 action: 'fix',

@@ -12,8 +12,13 @@ import { listSchedules, pauseSchedule, resumeSchedule, triggerScheduleNow, getSc
 import type { Schedule, ExecutionLog } from '@/lib/scheduler'
 import { uploadAndTrainDocument, getDocuments, deleteDocuments } from '@/lib/ragKnowledgeBase'
 import type { RAGDocument } from '@/lib/ragKnowledgeBase'
-import { FiClock, FiPlay, FiPause, FiUpload, FiTrash2, FiRefreshCw, FiFile } from 'react-icons/fi'
+import { AlertTriangle, Clock, DatabaseZap, File, FileSearch, Play, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { useLanguage } from './LanguageContext'
+
+const glassCardClass = 'rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl transition-all duration-300 hover:border-emerald-300/20 hover:bg-white/[0.05]'
+const panelClass = 'rounded-lg border border-white/10 bg-black/20'
+const outlineButtonClass = 'rounded-md border-white/15 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white'
+const loadingBarClass = 'h-2 animate-pulse rounded-full bg-white/[0.07]'
 
 const DAILY_SCHEDULE_ID = '69ec55e7e35ffb1f44aa60eb'
 const WEEKLY_SCHEDULE_ID = '69ec55e7e35ffb1f44aa60ec'
@@ -44,18 +49,37 @@ export function AdvisoryHistoryView({ history, loadingHistory, onRefresh }: Hist
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{t('history_title')}</h2>
-        <Button variant="outline" size="sm" onClick={onRefresh} disabled={loadingHistory}>
-          <FiRefreshCw className={`h-3.5 w-3.5 mr-1 ${loadingHistory ? 'animate-spin' : ''}`} /> {t('history_refresh')}
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase text-emerald-200/70">Advisory memory</p>
+          <h2 className="mt-1 text-lg font-semibold text-white">{t('history_title')}</h2>
+        </div>
+        <Button variant="outline" size="sm" onClick={onRefresh} disabled={loadingHistory} className={outlineButtonClass}>
+          <RefreshCw className={`mr-1 h-3.5 w-3.5 ${loadingHistory ? 'animate-spin' : ''}`} /> {t('history_refresh')}
         </Button>
       </div>
       {history.length === 0 && !loadingHistory && (
-        <Card className="bg-card/80 backdrop-blur-lg border-border">
-          <CardContent className="py-8 text-center text-muted-foreground text-sm">{t('history_empty')}</CardContent>
+        <Card className="rounded-[1.5rem] border border-dashed border-emerald-300/20 bg-white/[0.035] text-slate-100 backdrop-blur-xl">
+          <CardContent className="p-8 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-emerald-300/25 bg-emerald-300/10 text-emerald-100">
+              <FileSearch className="h-5 w-5" />
+            </div>
+            <p className="text-xs uppercase text-emerald-200/70">No advisory memory yet</p>
+            <h3 className="mt-2 text-lg font-semibold text-white">{t('history_empty')}</h3>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">Generated advisory packets will appear here as farm intelligence memory after your first AI run.</p>
+          </CardContent>
         </Card>
       )}
-      {loadingHistory && <div className="animate-pulse space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-16 bg-muted rounded-lg" />)}</div>}
+      {loadingHistory && (
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+              <div className={`${loadingBarClass} w-2/3`} />
+              <div className={`${loadingBarClass} mt-3 w-1/3`} />
+            </div>
+          ))}
+        </div>
+      )}
       <ScrollArea className="max-h-[600px]">
         <div className="space-y-2 pr-2">
           {history.map((h: any) => {
@@ -63,17 +87,17 @@ export function AdvisoryHistoryView({ history, loadingHistory, onRefresh }: Hist
             const isOpen = expanded === id
             const summary = (() => { try { return JSON.parse(h?.farmer_summary ?? '{}') } catch { return null } })()
             return (
-              <Card key={id} className="bg-card/80 backdrop-blur-lg border-border cursor-pointer" onClick={() => setExpanded(isOpen ? null : id)}>
+              <Card key={id} className={`${glassCardClass} cursor-pointer`} onClick={() => setExpanded(isOpen ? null : id)}>
                 <CardContent className="py-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium">{summary?.crop ?? h?.crop ?? 'Advisory'} - {summary?.location ?? h?.location ?? ''}</p>
-                      <p className="text-xs text-muted-foreground">{h?.generated_at ? new Date(h.generated_at).toLocaleDateString() : ''}</p>
+                      <p className="text-sm font-medium text-white">{summary?.crop ?? h?.crop ?? 'Advisory'} - {summary?.location ?? h?.location ?? ''}</p>
+                      <p className="text-xs text-slate-500">{h?.generated_at ? new Date(h.generated_at).toLocaleDateString() : ''}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs">{isOpen ? t('history_collapse') : t('history_expand')}</Badge>
+                    <Badge variant="outline" className="border-white/10 bg-black/25 text-xs text-slate-300">{isOpen ? t('history_collapse') : t('history_expand')}</Badge>
                   </div>
                   {isOpen && (
-                    <div className="mt-3 pt-3 border-t border-border text-xs space-y-2">
+                    <div className="mt-3 space-y-2 border-t border-white/10 pt-3 text-xs text-slate-400">
                       {h?.total_income_projection && <p><strong>{t('history_income')}</strong> {h.total_income_projection}</p>}
                       {h?.weather_advisory && <p><strong>{t('history_weather')}</strong> {String(h.weather_advisory).slice(0, 200)}...</p>}
                       {h?.pest_advisory && <p><strong>{t('history_pest')}</strong> {String(h.pest_advisory).slice(0, 200)}...</p>}
@@ -148,37 +172,59 @@ export function ScheduleManagement() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{t('sched_title')}</h2>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      <div>
+        <p className="text-xs uppercase text-emerald-200/70">Automation control</p>
+        <h2 className="mt-1 text-lg font-semibold text-white">{t('sched_title')}</h2>
+      </div>
+      {error && (
+        <div className="rounded-lg border border-red-400/20 bg-red-950/20 p-4 text-sm text-red-100">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-200" />
+            <div>
+              <p className="text-xs font-semibold uppercase text-red-200/80">Automation status unavailable</p>
+              <p className="mt-1 leading-6">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {scheduleInfo.map(info => {
           const sched = schedules.find(s => s.id === info.id)
           return (
-            <Card key={info.id} className="bg-card/80 backdrop-blur-lg border-border">
+            <Card key={info.id} className={glassCardClass}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2"><FiClock className="text-primary" /> {t(info.nameKey)}</CardTitle>
-                <p className="text-xs text-muted-foreground">{t(info.descKey)}</p>
+                <CardTitle className="flex items-center gap-2 text-sm text-white"><Clock className="h-4 w-4 text-emerald-200" /> {t(info.nameKey)}</CardTitle>
+                <p className="text-xs text-slate-500">{t(info.descKey)}</p>
               </CardHeader>
               <CardContent className="space-y-3">
                 {sched ? (
                   <>
                     <div className="flex items-center justify-between">
                       <Badge variant={sched.is_active ? 'default' : 'secondary'}>{sched.is_active ? t('sched_active') : t('sched_paused')}</Badge>
-                      <p className="text-xs text-muted-foreground">{sched.cron_expression ? cronToHuman(sched.cron_expression) : ''}</p>
+                      <p className="text-xs text-slate-500">{sched.cron_expression ? cronToHuman(sched.cron_expression) : ''}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Label className="text-xs">{sched.is_active ? t('sched_pause') : t('sched_activate')}</Label>
                       <Switch checked={sched.is_active} onCheckedChange={() => handleToggle(sched)} disabled={loading} />
                     </div>
-                    {sched.next_run_time && <p className="text-xs text-muted-foreground">{t('sched_next')} {new Date(sched.next_run_time).toLocaleString()}</p>}
-                    {sched.last_run_at && <p className="text-xs text-muted-foreground">{t('sched_last')} {new Date(sched.last_run_at).toLocaleString()}</p>}
+                    {sched.next_run_time && <p className="text-xs text-slate-500">{t('sched_next')} {new Date(sched.next_run_time).toLocaleString()}</p>}
+                    {sched.last_run_at && <p className="text-xs text-slate-500">{t('sched_last')} {new Date(sched.last_run_at).toLocaleString()}</p>}
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleTrigger(sched.id)} disabled={loading}><FiPlay className="h-3 w-3 mr-1" /> {t('sched_run_now')}</Button>
-                      <Button variant="outline" size="sm" onClick={() => handleLogs(sched.id)}>{t('sched_logs')}</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleTrigger(sched.id)} disabled={loading} className={outlineButtonClass}><Play className="mr-1 h-3 w-3" /> {t('sched_run_now')}</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleLogs(sched.id)} className={outlineButtonClass}>{t('sched_logs')}</Button>
                     </div>
                   </>
                 ) : (
-                  <p className="text-xs text-muted-foreground">{loading ? t('sched_loading') : t('sched_not_found')}</p>
+                  <div className="rounded-lg border border-dashed border-white/10 bg-black/20 p-4">
+                    {loading ? (
+                      <div className="space-y-2">
+                        <div className={`${loadingBarClass} w-3/4`} />
+                        <div className={`${loadingBarClass} w-1/2`} />
+                      </div>
+                    ) : (
+                      <p className="text-xs leading-5 text-slate-500">{t('sched_not_found')} Configure this automation to enable scheduled advisory intelligence.</p>
+                    )}
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -186,14 +232,14 @@ export function ScheduleManagement() {
         })}
       </div>
       {logs.length > 0 && (
-        <Card className="bg-card/80 backdrop-blur-lg border-border">
+        <Card className={glassCardClass}>
           <CardHeader className="pb-2"><CardTitle className="text-sm">{t('sched_recent_logs')}</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-2">
               {logs.map(log => (
-                <div key={log.id} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30 text-xs">
+                <div key={log.id} className={`${panelClass} flex items-center justify-between p-2 text-xs`}>
                   <span>{new Date(log.executed_at).toLocaleString()}</span>
-                  <Badge variant={log.success ? 'default' : 'destructive'}>{log.success ? t('sched_success') : t('sched_failed')}</Badge>
+                  <Badge variant="outline" className={log.success ? 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100' : 'border-red-400/20 bg-red-500/10 text-red-100'}>{log.success ? t('sched_success') : t('sched_failed')}</Badge>
                 </div>
               ))}
             </div>
@@ -235,28 +281,32 @@ export function SettingsKB() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">{t('settings_title')}</h2>
+      <div>
+        <p className="text-xs uppercase text-emerald-200/70">System knowledge base</p>
+        <h2 className="mt-1 text-lg font-semibold text-white">{t('settings_title')}</h2>
+      </div>
       {KB_CONFIG.map(kb => {
         const docs = kbDocs[kb.id] ?? []
         const isLoading = loadingKb === kb.id
         const isUploading = uploading === kb.id
         return (
-          <Card key={kb.id} className="bg-card/80 backdrop-blur-lg border-border">
+          <Card key={kb.id} className={glassCardClass}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2"><FiFile className="text-primary" /> {t(kb.nameKey)}</CardTitle>
-              <p className="text-xs text-muted-foreground">{t(kb.descKey)}</p>
+              <CardTitle className="flex items-center gap-2 text-sm text-white"><File className="h-4 w-4 text-emerald-200" /> {t(kb.nameKey)}</CardTitle>
+              <p className="text-xs text-slate-500">{t(kb.descKey)}</p>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => loadDocs(kb.id)} disabled={isLoading}>
-                  <FiRefreshCw className={`h-3 w-3 mr-1 ${isLoading ? 'animate-spin' : ''}`} /> {t('settings_load_docs')}
+                <Button variant="outline" size="sm" onClick={() => loadDocs(kb.id)} disabled={isLoading} className={outlineButtonClass}>
+                  <RefreshCw className={`mr-1 h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} /> {t('settings_load_docs')}
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => fileRefs.current[kb.id]?.click()} disabled={isUploading}>
-                  <FiUpload className="h-3 w-3 mr-1" /> {isUploading ? t('settings_uploading') : t('settings_upload')}
+                <Button variant="outline" size="sm" onClick={() => fileRefs.current[kb.id]?.click()} disabled={isUploading} className={outlineButtonClass}>
+                  <Upload className="mr-1 h-3 w-3" /> {isUploading ? t('settings_uploading') : t('settings_upload')}
                 </Button>
                 <input
                   type="file"
                   accept=".pdf,.docx,.txt"
+                  aria-label={`Upload document for ${t(kb.nameKey)}`}
                   className="hidden"
                   ref={el => { fileRefs.current[kb.id] = el }}
                   onChange={e => {
@@ -269,25 +319,37 @@ export function SettingsKB() {
               {docs.length > 0 && (
                 <div className="space-y-1">
                   {docs.map((doc, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30 text-xs">
+                    <div key={i} className={`${panelClass} flex items-center justify-between p-2 text-xs`}>
                       <div>
                         <span className="font-medium">{doc.fileName}</span>
-                        {doc.status && <Badge variant="outline" className="ml-2 text-xs">{doc.status}</Badge>}
+                        {doc.status && <Badge variant="outline" className="ml-2 border-emerald-300/20 bg-emerald-300/10 text-xs text-emerald-100">{doc.status}</Badge>}
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(kb.id, doc.fileName)}>
-                        <FiTrash2 className="h-3 w-3 text-destructive" />
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(kb.id, doc.fileName)} aria-label={`Delete ${doc.fileName}`} className="text-slate-400 hover:bg-red-400/10 hover:text-red-100">
+                        <Trash2 className="h-3 w-3 text-red-200" />
                       </Button>
                     </div>
                   ))}
                 </div>
               )}
-              {docs.length === 0 && !isLoading && <p className="text-xs text-muted-foreground">{t('settings_no_docs')}</p>}
+              {isLoading && (
+                <div className="rounded-lg border border-white/10 bg-black/20 p-3">
+                  <div className={`${loadingBarClass} w-2/3`} />
+                  <div className={`${loadingBarClass} mt-2 w-1/3`} />
+                </div>
+              )}
+              {docs.length === 0 && !isLoading && (
+                <div className="rounded-lg border border-dashed border-white/10 bg-black/20 p-4 text-center">
+                  <DatabaseZap className="mx-auto h-5 w-5 text-emerald-200" />
+                  <p className="mt-2 text-xs font-medium text-slate-300">{t('settings_no_docs')}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">Upload trusted source material to strengthen this intelligence module.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )
       })}
       <Separator />
-      <Card className="bg-card/80 backdrop-blur-lg border-border">
+      <Card className={glassCardClass}>
         <CardHeader className="pb-2"><CardTitle className="text-sm">{t('settings_agents')}</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
@@ -303,9 +365,9 @@ export function SettingsKB() {
               { nameKey: 'agent_fraud', roleKey: 'agent_fraud_role' },
               { nameKey: 'agent_waste', roleKey: 'agent_waste_role' },
             ].map((a, i) => (
-              <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-secondary/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                <div><p className="font-medium">{t(a.nameKey)}</p><p className="text-muted-foreground">{t(a.roleKey)}</p></div>
+              <div key={i} className="flex items-center gap-2 rounded border border-white/5 bg-black/20 p-2">
+                <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200" />
+                <div><p className="font-medium text-white">{t(a.nameKey)}</p><p className="text-slate-500">{t(a.roleKey)}</p></div>
               </div>
             ))}
           </div>

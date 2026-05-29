@@ -53,7 +53,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, ...update } = body;
+    const { id, user_id: _userId, ...update } = body;
     const Model = await getSchemeEnrollmentModel();
     const doc = await Model.findOneAndUpdate({ _id: id, user_id: userId }, update, { new: true });
     return NextResponse.json({ success: true, data: doc });

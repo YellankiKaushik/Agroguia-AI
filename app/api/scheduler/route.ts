@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const SCHEDULER_BASE_URL = process.env.LYZR_SCHEDULER_BASE_URL || 'https://scheduler.studio.lyzr.ai'
-const LYZR_API_KEY = process.env.LYZR_API_KEY || ''
+const EXTENSION_API_KEY = process.env.LYZR_API_KEY || ''
 
 function getHeaders() {
   return {
     'Content-Type': 'application/json',
     'accept': 'application/json',
-    'x-api-key': LYZR_API_KEY,
+    'x-api-key': EXTENSION_API_KEY,
   }
 }
 
 function apiKeyCheck() {
-  if (!LYZR_API_KEY) {
+  if (!EXTENSION_API_KEY) {
     return NextResponse.json(
-      { success: false, error: 'LYZR_API_KEY not configured on server' },
+      { success: false, error: 'Extension API key not configured on server' },
       { status: 500 }
     )
   }
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
       case 'list':
       default: {
         const listQuery = new URLSearchParams()
-        listQuery.set('user_id', LYZR_API_KEY)
+        listQuery.set('user_id', EXTENSION_API_KEY)
         if (agentId) listQuery.set('agent_id', agentId)
         if (searchParams.get('is_active')) listQuery.set('is_active', searchParams.get('is_active')!)
         if (searchParams.get('skip')) listQuery.set('skip', searchParams.get('skip')!)
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           cron_expression: params.cron_expression,
           message: params.message,
           timezone: params.timezone || 'UTC',
-          user_id: LYZR_API_KEY,
+          user_id: EXTENSION_API_KEY,
           max_retries: params.max_retries ?? 3,
           retry_delay: params.retry_delay ?? 300,
         })

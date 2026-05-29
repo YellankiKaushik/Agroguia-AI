@@ -3,7 +3,7 @@
 import React from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { FiFileText, FiShield, FiDollarSign } from 'react-icons/fi'
+import { FileText, IndianRupee, ShieldCheck } from 'lucide-react'
 
 interface Scheme {
   name: string
@@ -35,30 +35,34 @@ interface SchemesLoansInsuranceProps {
 
 export default function SchemesLoansInsurance({ schemes, insurance, loan }: SchemesLoansInsuranceProps) {
   return (
-    <Card className="bg-card/80 backdrop-blur-lg border-border">
-      <CardContent className="py-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <Card className="rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl transition-all duration-300 hover:border-emerald-300/20 hover:bg-white/[0.05]">
+      <CardContent className="p-5">
+        <div className="mb-5">
+          <p className="text-xs uppercase text-emerald-200/70">Opportunity and protection intelligence</p>
+          <h3 className="mt-1 text-sm font-semibold text-white">Schemes, loans, and insurance readiness</h3>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Schemes */}
-          <div>
-            <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-              <FiFileText className="h-3.5 w-3.5 text-blue-600" />
-              SCHEMES
+          <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+              <FileText className="h-4 w-4 text-teal-200" />
+              Scheme discovery
             </h4>
             {Array.isArray(schemes?.enrolled) && schemes.enrolled.map((s, i) => (
-              <div key={i} className="flex items-center justify-between text-xs mb-1 p-1.5 rounded bg-green-50 border border-green-100">
-                <span>{s.name}</span>
-                <Badge variant="outline" className="text-xs py-0 bg-green-100 text-green-800 border-green-200">{s.status}</Badge>
+              <div key={i} className="mb-2 flex items-center justify-between rounded-md border border-emerald-400/20 bg-emerald-950/20 p-2 text-xs">
+                <span className="text-slate-200">{s.name}</span>
+                <Badge variant="outline" className="border-emerald-400/20 bg-emerald-300/10 py-0 text-xs text-emerald-100">{s.status}</Badge>
               </div>
             ))}
-            <div className="mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100">
-              <p className="text-xs font-medium text-amber-800">
+            <div className="mt-3 rounded-lg border border-amber-400/20 bg-amber-950/20 p-3">
+              <p className="text-xs font-semibold text-amber-200">
                 {Array.isArray(schemes?.missing) ? schemes.missing.length : 0} schemes not enrolled
               </p>
-              <p className="text-xs text-amber-700 mt-0.5">
+              <p className="mt-1 text-xs text-amber-100/80">
                 Missing: {schemes?.total_missing_benefit ?? ''}
               </p>
               {Array.isArray(schemes?.missing) && schemes.missing.slice(0, 2).map((s, i) => (
-                <div key={i} className="text-xs mt-1 text-amber-600">
+                <div key={i} className="mt-1 text-xs text-amber-200/80">
                   - {s.name}: {s.benefit}
                 </div>
               ))}
@@ -66,50 +70,50 @@ export default function SchemesLoansInsurance({ schemes, insurance, loan }: Sche
           </div>
 
           {/* Loans */}
-          <div>
-            <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-              <FiDollarSign className="h-3.5 w-3.5 text-green-600" />
-              LOANS
+          <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+              <IndianRupee className="h-4 w-4 text-emerald-200" />
+              Loan optimization
             </h4>
             <div className="space-y-2">
-              <div className="p-2 rounded-lg bg-red-50 border border-red-100">
-                <p className="text-xs font-medium text-red-800">Current: {loan?.current?.lender ?? '--'}</p>
-                <p className="text-xs text-red-600">{loan?.current?.amount ?? ''} @ {loan?.current?.rate ?? ''}</p>
+              <div className="rounded-lg border border-red-400/20 bg-red-950/20 p-3">
+                <p className="text-xs font-semibold text-red-200">Current: {loan?.current?.lender ?? '--'}</p>
+                <p className="mt-1 text-xs text-red-100/80">{loan?.current?.amount ?? ''} @ {loan?.current?.rate ?? ''}</p>
               </div>
-              <div className="p-2 rounded-lg bg-green-50 border border-green-100">
-                <p className="text-xs font-medium text-green-800">Better: {loan?.better?.lender ?? '--'}</p>
-                <p className="text-xs text-green-600">{loan?.better?.amount ?? ''} @ {loan?.better?.rate ?? ''}</p>
+              <div className="rounded-lg border border-emerald-400/20 bg-emerald-950/20 p-3">
+                <p className="text-xs font-semibold text-emerald-200">Better: {loan?.better?.lender ?? '--'}</p>
+                <p className="mt-1 text-xs text-emerald-100/80">{loan?.better?.amount ?? ''} @ {loan?.better?.rate ?? ''}</p>
               </div>
-              <p className="text-xs font-semibold text-primary">Saving: {loan?.saving ?? '--'}</p>
+              <p className="rounded-md border border-emerald-300/15 bg-emerald-300/[0.055] p-2 text-xs font-semibold text-emerald-100">Saving: {loan?.saving ?? '--'}</p>
             </div>
           </div>
 
           {/* Insurance */}
-          <div>
-            <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-              <FiShield className="h-3.5 w-3.5 text-purple-600" />
-              INSURANCE
+          <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+              <ShieldCheck className="h-4 w-4 text-emerald-200" />
+              Insurance readiness
             </h4>
-            <div className="space-y-1.5 text-xs">
+            <div className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Policy</span>
-                <span className="font-medium">{insurance?.policy ?? '--'}</span>
+                <span className="text-slate-500">Policy</span>
+                <span className="font-medium text-slate-200">{insurance?.policy ?? '--'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Damage</span>
-                <span className="font-medium">{insurance?.damage_percent ?? '--'}</span>
+                <span className="text-slate-500">Damage</span>
+                <span className="font-medium text-slate-200">{insurance?.damage_percent ?? '--'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Insured Sum</span>
-                <span className="font-medium">{insurance?.insured_sum ?? '--'}</span>
+                <span className="text-slate-500">Insured Sum</span>
+                <span className="font-medium text-slate-200">{insurance?.insured_sum ?? '--'}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Payout</span>
-                <span className="font-bold text-primary">{insurance?.expected_payout ?? '--'}</span>
+              <div className="flex justify-between rounded-md border border-emerald-300/15 bg-emerald-300/[0.055] p-2">
+                <span className="text-emerald-100/80">Payout</span>
+                <span className="font-bold text-emerald-100">{insurance?.expected_payout ?? '--'}</span>
               </div>
               {insurance?.missing_document && (
-                <div className="mt-1 p-1.5 rounded bg-amber-50 border border-amber-100">
-                  <p className="text-xs text-amber-700">Missing: {insurance.missing_document}</p>
+                <div className="mt-2 rounded border border-amber-400/20 bg-amber-950/20 p-2">
+                  <p className="text-xs text-amber-200">Missing: {insurance.missing_document}</p>
                 </div>
               )}
             </div>

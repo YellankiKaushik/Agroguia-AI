@@ -3,8 +3,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { FiMapPin, FiDroplet, FiWind, FiThermometer, FiCheckCircle, FiAlertTriangle, FiCloud } from 'react-icons/fi'
+import { AlertTriangle, CheckCircle2, Cloud, Droplet, MapPin, Thermometer, Wind } from 'lucide-react'
 import { useLanguage } from './LanguageContext'
 
 interface Alert {
@@ -48,9 +47,9 @@ interface DashboardHeroProps {
 
 function alertBadgeClass(level: string): string {
   const l = level.toUpperCase()
-  if (l === 'HIGH') return 'bg-red-100 text-red-800 border-red-200'
-  if (l === 'MED') return 'bg-amber-100 text-amber-800 border-amber-200'
-  return 'bg-green-100 text-green-800 border-green-200'
+  if (l === 'HIGH') return 'border-red-400/20 bg-red-950/30 text-red-200'
+  if (l === 'MED') return 'border-amber-400/20 bg-amber-950/30 text-amber-200'
+  return 'border-emerald-400/20 bg-emerald-950/30 text-emerald-200'
 }
 
 function alertDotClass(level: string): string {
@@ -79,35 +78,36 @@ export default function DashboardHero({ farmer, weather, alerts, actions, onTogg
   return (
     <div className="space-y-4">
       {/* Top farmer info bar */}
-      <Card className="bg-primary/5 border-primary/20">
-        <CardContent className="py-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <Card className="overflow-hidden rounded-lg border border-white/10 bg-slate-950/80 text-slate-100 shadow-2xl shadow-black/30 backdrop-blur-xl transition-all duration-300 hover:border-emerald-300/20">
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-xl font-bold text-foreground">{farmer.name}</h2>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
-                <FiMapPin className="h-3.5 w-3.5" />
+              <p className="text-xs uppercase text-emerald-200/70">Active farm intelligence profile</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">{farmer.name}</h2>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-400">
+                <MapPin className="h-3.5 w-3.5 text-teal-200" />
                 <span>{farmer.district}{farmer.state ? `, ${farmer.state}` : ''}</span>
-                <span className="mx-1">|</span>
+                <span className="text-slate-600">|</span>
                 <span>{farmer.land_size_acres} Acres</span>
-                <span className="mx-1">|</span>
+                <span className="text-slate-600">|</span>
                 <span>{farmer.current_crop} {farmer.crop_stage}</span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-1 text-xs bg-card px-2 py-1 rounded-md border border-border">
-                <FiThermometer className="h-3 w-3 text-orange-500" />
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs">
+                <Thermometer className="mb-1 h-3.5 w-3.5 text-amber-200" />
                 <span>{weather.temperature}</span>
               </div>
-              <div className="flex items-center gap-1 text-xs bg-card px-2 py-1 rounded-md border border-border">
-                <FiDroplet className="h-3 w-3 text-blue-500" />
+              <div className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs">
+                <Droplet className="mb-1 h-3.5 w-3.5 text-teal-200" />
                 <span>{weather.humidity}</span>
               </div>
-              <div className="flex items-center gap-1 text-xs bg-card px-2 py-1 rounded-md border border-border">
-                <FiWind className="h-3 w-3 text-teal-500" />
+              <div className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs">
+                <Wind className="mb-1 h-3.5 w-3.5 text-emerald-200" />
                 <span>{weather.wind_speed}</span>
               </div>
-              <div className="flex items-center gap-1 text-xs bg-card px-2 py-1 rounded-md border border-border">
-                <FiCloud className="h-3 w-3 text-blue-400" />
+              <div className="rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs">
+                <Cloud className="mb-1 h-3.5 w-3.5 text-sky-200" />
                 <span>{weather.rainfall_forecast}</span>
               </div>
             </div>
@@ -116,29 +116,38 @@ export default function DashboardHero({ farmer, weather, alerts, actions, onTogg
       </Card>
 
       {/* Actions + Alerts side by side */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Today's Actions */}
-        <Card className="bg-card/80 backdrop-blur-lg border-border">
-          <CardContent className="py-4">
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-              <FiCheckCircle className="h-4 w-4 text-primary" />
-              TODAY&apos;S ACTIONS
-            </h3>
+        <Card className="rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/20 hover:bg-white/[0.05]">
+          <CardContent className="p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase text-emerald-200/70">AI action queue</p>
+                <h3 className="mt-1 flex items-center gap-2 text-sm font-semibold text-white">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-200" />
+                  Today&apos;s actions
+                </h3>
+              </div>
+              <Badge variant="outline" className="border-white/10 bg-black/25 text-xs text-slate-400">{actions?.length ?? 0} tasks</Badge>
+            </div>
             <div className="space-y-2">
               {Array.isArray(actions) && actions.map((act, i) => (
-                <div key={i} className="flex items-start gap-2.5">
+                <div key={i} className="flex items-start gap-3 rounded-md border border-white/5 bg-black/20 p-3">
                   <button
+                    type="button"
                     onClick={() => toggleAction(i)}
-                    className={`mt-0.5 w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${checkedActions[i] ? 'bg-primary border-primary' : 'border-border hover:border-primary/50'}`}
+                    aria-label={`${checkedActions[i] ? 'Mark incomplete' : 'Mark complete'}: ${act.action}`}
+                    aria-pressed={checkedActions[i]}
+                    className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-colors ${checkedActions[i] ? 'border-emerald-200 bg-emerald-200' : 'border-white/20 hover:border-emerald-300/50'}`}
                   >
-                    {checkedActions[i] && <FiCheckCircle className="h-3 w-3 text-primary-foreground" />}
+                    {checkedActions[i] && <CheckCircle2 className="h-3 w-3 text-slate-950" />}
                   </button>
                   <div className={`flex-1 ${checkedActions[i] ? 'opacity-50 line-through' : ''}`}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{act.action}</span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-medium text-slate-100">{act.action}</span>
                       <Badge variant={priorityBadgeVariant(act.priority)} className="text-xs py-0">{act.priority}</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">{act.detail}</p>
+                    <p className="mt-1 text-xs text-slate-500">{act.detail}</p>
                   </div>
                 </div>
               ))}
@@ -147,18 +156,24 @@ export default function DashboardHero({ farmer, weather, alerts, actions, onTogg
         </Card>
 
         {/* Alerts */}
-        <Card className="bg-card/80 backdrop-blur-lg border-border">
-          <CardContent className="py-4">
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-              <FiAlertTriangle className="h-4 w-4 text-amber-500" />
-              ALERTS
-            </h3>
+        <Card className="rounded-lg border border-white/10 bg-white/[0.035] text-slate-100 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/20 hover:bg-white/[0.05]">
+          <CardContent className="p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase text-amber-200/70">Risk intelligence</p>
+                <h3 className="mt-1 flex items-center gap-2 text-sm font-semibold text-white">
+                  <AlertTriangle className="h-4 w-4 text-amber-200" />
+                  Alerts
+                </h3>
+              </div>
+              <Badge variant="outline" className="border-white/10 bg-black/25 text-xs text-slate-400">{alerts?.length ?? 0} signals</Badge>
+            </div>
             <div className="space-y-2">
               {Array.isArray(alerts) && alerts.map((alert, i) => (
-                <div key={i} className={`flex items-start gap-2.5 p-2.5 rounded-lg border ${alertBadgeClass(alert.level)}`}>
+                <div key={i} className={`flex items-start gap-3 rounded-lg border p-3 ${alertBadgeClass(alert.level)}`}>
                   <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${alertDotClass(alert.level)}`} />
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs font-bold">{alert.level}</span>
                       <span className="text-sm font-medium">{alert.label}</span>
                     </div>
