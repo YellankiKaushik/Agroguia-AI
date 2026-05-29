@@ -63,7 +63,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
 **Key design principles evident in the implementation**
 - **Structured output contract** over free-form text: the advisory is a JSON packet with fixed keys.
 - **User-scoped persistence**: CRUD APIs always scope by authenticated `user_id`.
-- **Server-side key isolation**: OpenRouter + LYZR keys are accessed only in server code.
+- **Server-side key isolation**: OpenRouter + kk keys are accessed only in server code.
 - **Progressive UX**: onboarding wizard reduces cognitive load; dashboard aggregates modules.
 
 ---
@@ -100,7 +100,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
   - Single entry point for advisory generation
   - Normalizes response format for UI consumption (metadata + merged defaults)
 - `app/api/rag/route.ts` (optional feature surface)
-  - Server proxy to LYZR RAG v3:
+  - Server proxy to kk RAG v3:
     - list documents, upload+train, delete docs, crawl website content
 - `app/api/scheduler/route.ts` (optional feature surface)
   - Server proxy to external scheduler:
@@ -138,7 +138,7 @@ The long-term vision is an always-available “farm co-pilot” that bridges agr
 **Integrations**
 - **OpenRouter**: used for primary advisory generation (`OPENROUTER_API_KEY`, optional `OPENROUTER_MODEL`).
 - **MongoDB Atlas**: used for all persistence via `DATABASE_URL`.
-- **LYZR services** (optional):
+- **kk services** (optional):
   - RAG document operations
   - Scheduler operations
   - Asset uploads
