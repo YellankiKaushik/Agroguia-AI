@@ -303,6 +303,18 @@ Use this flow to verify the full system:
 
 ---
 
+## Environment Variables
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `OPENROUTER_API_KEY` | Yes | Server-side OpenRouter advisory generation |
+| `OPENROUTER_MODEL` | Optional | Model override, defaults to `qwen/qwen-2.5-72b-instruct` |
+| `DATABASE_URL` | Yes | MongoDB Atlas connection string |
+| `JWT_SECRET` | Yes | JWT signing secret |
+| `APP_JWT_SECRET` | Optional | Fallback JWT signing secret |
+
+
+
 
 ---
 
