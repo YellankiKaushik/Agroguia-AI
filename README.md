@@ -187,7 +187,7 @@ This structure allows the UI to render AI output as clear modules rather than a 
 | MongoDB Atlas | Persistent database |
 | Mongoose | MongoDB schema/model layer |
 | JWT + bcrypt | Standalone authentication and password security |
-| lucide-react / react-icons | Interface iconography |
+| lucide-react | Interface iconography |
 
 ---
 
@@ -228,9 +228,9 @@ models/
   FertilizerTracker.ts
   SchemeEnrollment.ts
 
-PROJECT_EXPLANATION_V2.md  Founder-grade master system documentation
-AGROGUIA_AI_RUNBOOK.md     Local setup and operations runbook
-DATABASE_MIGRATION_REPORT.md
+Project_Explanation.md     Founder-grade master system documentation
+RUNNING_THE_PROJECT.md     Complete local development, validation, deployment, and troubleshooting guide
+AGROGUIA_AI_RUNBOOK.md     Short operational runbook for local setup and common issues
 ```
 
 ---
@@ -334,22 +334,22 @@ All protected records are scoped by authenticated `user_id`.
 
 ## Documentation
 
-For deep architecture, product strategy, AI workflow, roadmap, visual generation context, and demo guidance, read:
+For deep architecture, product strategy, AI workflow, roadmap, visual generation context, setup, and demo guidance, read:
 
-- [`PROJECT_EXPLANATION_V2.md`](./PROJECT_EXPLANATION_V2.md)
+- [`Project_Explanation.md`](./Project_Explanation.md)
+- [`RUNNING_THE_PROJECT.md`](./RUNNING_THE_PROJECT.md)
 - [`AGROGUIA_AI_RUNBOOK.md`](./AGROGUIA_AI_RUNBOOK.md)
-- [`DATABASE_MIGRATION_REPORT.md`](./DATABASE_MIGRATION_REPORT.md)
 
-`PROJECT_EXPLANATION_V2.md` is the master system document and should be treated as the primary source for hackathon submission, pitch deck content, product storytelling, and future technical planning.
+`Project_Explanation.md` is the master system document and should be treated as the primary source for hackathon submission, pitch deck content, product storytelling, and future technical planning.
 
 ---
 
 ## Current Engineering Notes
 
 - The core product runs as a standalone Next.js + MongoDB Atlas + OpenRouter system.
-- Build configuration currently skips type-checking and linting during `next build` for faster iteration.
-- Standalone TypeScript validation may report existing issues in optional/legacy surfaces such as voice streaming utilities, resizable UI imports, RAG, scheduler, and fetch wrapper typing.
-- Production hardening should enable secure cookies, add auth rate limiting, strengthen schema validation, and ground advisories with live weather, mandi, pest, and scheme data.
+- Local validation currently passes for lint, standalone TypeScript checking, and production build.
+- Development server runs on `http://localhost:3333`.
+- Production hardening should add auth rate limiting, strengthen schema validation, and ground advisories with live weather, mandi, pest, and scheme data.
 
 ---
 
