@@ -35,9 +35,15 @@ function buildSystemPrompt(): string {
     "Produce realistic Indian agriculture advisory output for dashboard consumption.",
     "Include these top-level keys exactly:",
     "farmer_summary, weather_advisory, pest_advisory, protection_plan, market_intelligence, government_schemes, insurance_status, loan_advisory, waste_value, total_income_projection, voice_summaries.",
-    "Use concise actionable recommendations.",
-    "For weather_advisory, pest_advisory, protection_plan, market_intelligence, government_schemes, insurance_status, loan_advisory, waste_value:",
-    "return JSON objects (not plain text).",
+    "Use concise actionable recommendations and do not wrap nested objects as strings.",
+    "weather_advisory must include summary, risk_level, fungal_risk_flag, fungal_risk_details, todays_actions array, and seven_day_calendar array.",
+    "pest_advisory must include summary, primary_disease_name, overall_risk, and threats array.",
+    "protection_plan must include summary, spray_plan, fertilizer_plan, and cost_summary.",
+    "market_intelligence must include summary and market_intelligence object with mandi_comparison, best_market, sell_or_wait, sell_wait_analysis, msp_status, and storage_advisory.",
+    "government_schemes must include summary, enrolled_schemes, missing_schemes, deadline_alerts, and total_potential_benefits.",
+    "insurance_status must include summary, eligibility_verdict, document_checklist, expected_payout, and filing_steps.",
+    "loan_advisory must include summary, loan_options, best_recommendation, recommendation_reason, and documents_required.",
+    "waste_value must include summary, waste_inventory, nearby_buyers, total_waste_income, and composting_guide.",
   ].join(" ");
 }
 
